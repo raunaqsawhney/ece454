@@ -1,0 +1,109 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements. See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership. The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License. You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied. See the License for the
+ specific language governing permissions and limitations
+ under the License.
+-->
+<project name="ece454750s15a1" default="ece454750s15a1" basedir=".">
+
+  <description>Thrift Java Tutorial</description>
+
+  <property name="src" location="src" />
+  <property name="gen" location="gen-java" />
+  <property name="build" location="build" />
+
+  <path id="libs.classpath">
+      <fileset dir="../../thrift-0.9.2/lib/java/build">
+      <include name="*.jar" />
+      <exclude name="-test.jar" />
+    </fileset>
+    <fileset dir="../../thrift-0.9.2/lib/java/build/lib">
+      <include name="*.jar" />
+    </fileset>
+  </path>
+  <path id="build.classpath">
+    <path refid="libs.classpath" />
+    <pathelement path="${gen}" />
+  </path>
+  <path id="tutorial.classpath">
+    <path refid="build.classpath" />
+    <pathelement path="${build}" />
+    <pathelement path="tutorial.jar" />
+  </path>
+  
+  <target name="init">
+    <tstamp />
+    <mkdir dir="${build}"/>
+    <mkdir dir="${build}/log"/>
+  </target>
+
+  <target name="compile" depends="init, generate">
+    <javac source="1.6" target="1.6" srcdir="${gen}" destdir="${build}" classpathref="libs.classpath" />
+    <javac source="1.6" target="1.6" srcdir="${src}" destdir="${build}" classpathref="build.classpath" />
+  </target>
+
+  <target name="test" depends="ece454750s15a1" />
+
+  <!-- target name="ece454750s15a1" description="Run the assignment server" -->
+  <target name="ece454750s15a1" description="Run the assignment" depends="compile" >
+    <jar jarfile="ece454750s15a1.jar" basedir="${build}"/>
+    <parallel>
+      <java classname="BEServer" fork="true" timeout="10000"
+        classpathref="ece454750s15a1.classpath" failonerror="false" output="${build}/log/ece454750s15a1.log">
+      </java>
+      <sequential>
+        <sleep seconds="2"/>
+        <echo>simple ece454750s15a1 client</echo>
+        <java classname="Client"
+          classpathref="ece454750s15a1.classpath" failonerror="true">
+          <arg line="simple"/>
+        </java>
+      </sequential>
+    </parallel>
+  </target>
+
+  <target name="generate">
+    <!-- Generate the thrift gen-java source -->
+    <!-- exec executable="../../compiler/cpp/thrift" failonerror="true" -->
+    <exec executable="/usr/bin/thrift" failonerror="true" >
+      <arg line="--gen java -r ece454750s15a1.thrift"/>
+    </exec>
+  </target>
+
+  <target name="Client" description="Run a client" depends="compile">
+    <java classname="Client"
+      classpathref="ece454750s15a1.classpath" failonerror="true">
+    </java>
+  </target>
+
+  <target name="FEServer" description="Run FE server" depends="compile">
+      <java classname="FEServer" fork="true"
+        classpathref="ece454750s15a1.classpath" failonerror="false" >
+      </java>
+  </target>
+
+  <target name="BEServer" description="Run a BE server" depends="compile">
+      <java classname="BEServer" fork="true"
+        classpathref="ece454750s15a1.classpath" failonerror="false" >
+      </java>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}" />
+    <delete dir="${gen}"/>
+    <delete file="ece454750s15a1.jar" />
+  </target>
+
+</project>
