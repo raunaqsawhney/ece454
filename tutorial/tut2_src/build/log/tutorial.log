@@ -1,0 +1,8 @@
+org.apache.thrift.transport.TTransportException: Could not create ServerSocket on address 0.0.0.0/0.0.0.0:9090.
+	at org.apache.thrift.transport.TServerSocket.<init>(TServerSocket.java:109)
+	at org.apache.thrift.transport.TServerSocket.<init>(TServerSocket.java:91)
+	at org.apache.thrift.transport.TServerSocket.<init>(TServerSocket.java:83)
+	at org.apache.thrift.transport.TServerSocket.<init>(TServerSocket.java:76)
+	at JavaServer.simple(Unknown Source)
+	at JavaServer$1.run(Unknown Source)
+	at java.lang.Thread.run(Thread.java:745)
