@@ -12,13 +12,13 @@ import ece454750s15a1.*;
 
 public class FEServer {
 
-    public static Myservicehandler handler;
-    public static Myservice.Processor processor;
+    public static A1PasswordHandler handler;
+    public static A1Password.Processor processor;
     
     public static void main(String[] args) {
         try {
-            handler = new Myserverhandler();
-            processor = new Myservice.Processor(handler);
+            handler = new A1PasswordHandler();
+            processor = new A1Password.Processor(handler);
 
             Runnable simple = new Runnable() {
                 public void run() {
@@ -32,14 +32,14 @@ public class FEServer {
         }
     }
 
-    public static void simple(Myservice.Processor processor) {
+    public static void simple(A1Password.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
             System.out.println("Starting the ece454750s15a1 server...");
-            server.server();
+            server.serve();
         } catch (Exception e) {
             e.printStackTrace();
         }

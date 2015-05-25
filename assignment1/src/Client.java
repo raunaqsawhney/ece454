@@ -1,4 +1,4 @@
-import tutorial.*;
+import ece454750s15a1.*;
 
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSSLTransportFactory;
@@ -21,7 +21,7 @@ public class Client {
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
-            Myservice.Client client = new Myservice.Client(protocol);
+            A1Password.Client client = new A1Password.Client(protocol);
 
             perform(client);
 
@@ -31,10 +31,9 @@ public class Client {
         }
     }
 
-    private static void perform(Myservice.Client client) throws TException  {
+    private static void perform(A1Password.Client client) throws TException  {
         
-        string passwordHash = client.hashPassword("password", 10);
+        String passwordHash = client.hashPassword("password", (short) 10);
         System.out.println("Password Hash=" + passwordHash);
-
     }
 }

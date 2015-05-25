@@ -78,7 +78,7 @@
     <!-- Generate the thrift gen-java source -->
     <!-- exec executable="../../compiler/cpp/thrift" failonerror="true" -->
     <exec executable="/usr/bin/thrift" failonerror="true" >
-      <arg line="--gen java -r ece454750s15a1.thrift"/>
+        <arg line="--gen java -r ../ece454750s15a1.thrift"/>
     </exec>
   </target>
 
