@@ -1,3 +1,7 @@
 Starting the ece454750s15a1 server...
 BCrypt.hashpw(password,10)
-Hashed Password=$2a$10$zfrwdrfXDRzmseczQtRn/Oiu02HoKGKrwzQVnMvhu65OOovI4VZD.
+Hashed Password=$2a$10$WtBeCHEU1jaMiWwNPwpkDetu0yavhtqyeBRQAgykbBDU2D90pfp.i
+BCrypt.checkpw(password,$2a$10$WtBeCHEU1jaMiWwNPwpkDetu0yavhtqyeBRQAgykbBDU2D90pfp.i)
+Password Matches.
+BCrypt.checkpw(password_wrong,$2a$10$WtBeCHEU1jaMiWwNPwpkDetu0yavhtqyeBRQAgykbBDU2D90pfp.i)
+Password does not match

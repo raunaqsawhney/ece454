@@ -35,5 +35,12 @@ public class Client {
         
         String passwordHash = client.hashPassword("password", (short) 10);
         System.out.println("Password Hash=" + passwordHash);
+
+        boolean checkPassword = client.checkPassword("password", passwordHash);
+        System.out.println("Check Password PASS=" + checkPassword);
+
+        checkPassword = client.checkPassword("password_wrong", passwordHash);
+        System.out.println("Check Password FAIL=" + checkPassword);
+
     }
 }
