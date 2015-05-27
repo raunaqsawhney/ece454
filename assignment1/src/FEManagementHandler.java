@@ -31,7 +31,7 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     }
 
-    /*
+
    public boolean joinCluster(String host, int pport, int mport, int ncores){
     
         beList.put("host", host);
@@ -41,5 +41,5 @@ public class FEManagementHandler implements FEManagement.Iface {
     
         return true;
         
-    }*/
+    }
 }
