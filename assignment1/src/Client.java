@@ -21,7 +21,7 @@ public class Client {
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
-            A1Password.Client client = new A1Password.Client(protocol);
+            BEPassword.Client client = new BEPassword.Client(protocol);
 
             perform(client);
 
@@ -31,7 +31,7 @@ public class Client {
         }
     }
 
-    private static void perform(A1Password.Client client) throws TException  {
+    private static void perform(BEPassword.Client client) throws TException  {
         
         String passwordHash = client.hashPassword("password", (short) 10);
         System.out.println("Password Hash=" + passwordHash);

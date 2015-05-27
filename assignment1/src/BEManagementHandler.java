@@ -5,10 +5,14 @@ import  java.util.ArrayList;
 //Generated code
 import ece454750s15a1.*;
 
-public class A1ManagementHandler implements A1Management.Iface {
+public class BEManagementHandler implements BEManagement.Iface {
 
     public PerfCounters getPerfCounters() {
-    
+
+        PerfCounters testPerfCounters = new PerfCounters();
+
+        return testPerfCounters;
+
     }
 
     public ArrayList<String> getGroupMembers() {

@@ -4,15 +4,15 @@ import org.mindrot.jbcrypt.BCrypt;
 //Generated code
 import ece454750s15a1.*;
 
-public class A1PasswordHandler implements A1Password.Iface {
-    
+public class BEPasswordHandler implements BEPassword.Iface {
+
     public String hashPassword(String password, short logRounds) {
         System.out.println("BCrypt.hashpw(" + password + "," + logRounds + ")");
 
         // Default log_rounds = 10
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt(logRounds));
         System.out.println("Hashed Password=" + hashed);
-    
+
         return hashed;
     }
 

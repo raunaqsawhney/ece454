@@ -12,17 +12,17 @@ import ece454750s15a1.*;
 
 public class FEServer {
 
-    public static A1PasswordHandler handler;
-    public static A1Password.Processor processor;
+    public static BEPasswordHandler handler;
+    public static BEPassword.Processor processor;
     
     public static void main(String[] args) {
         try {
 
-            managementPassword = new A1ManagementHandler();
-            managementProcessor = new A1Management.Processor(managementHander);
+            managementPassword = new BEManagementHandler();
+            managementProcessor = new BEManagement.Processor(managementHander);
 
-            passwordHandler = new A1PasswordHandler();
-            passwordProcessor = new A1Password.Processor(passwordHandler);
+            passwordHandler = new BEPasswordHandler();
+            passwordProcessor = new BEPassword.Processor(passwordHandler);
 
             Runnable simpleManagement = new Runnable() {
                 public void run() {
@@ -44,7 +44,7 @@ public class FEServer {
         }
     }
      
-    public static void simpleManagement(A1Management.Processor managementProcessor) {
+    public static void simpleManagement(BEManagement.Processor managementProcessor) {
         try {
             TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(
@@ -58,7 +58,7 @@ public class FEServer {
     }
 
 
-    public static void simplePassword(A1Management.Processor passwordProcessor) {
+    public static void simplePassword(BEManagement.Processor passwordProcessor) {
         try {
             TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(

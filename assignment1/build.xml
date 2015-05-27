@@ -60,7 +60,7 @@
     <target name="ece454750s15a1" description="Run the assignment1" depends="compile" >
         <jar jarfile="ece454750s15a1.jar" basedir="${build}"/>
         <parallel>
-            <java classname="FEServer" fork="true" timeout="10000"
+            <java classname="BEServer" fork="true" timeout="10000"
                   classpathref="ece454750s15a1.classpath" failonerror="false" output="${build}/log/ece454750s15a1.log">
             </java>
             <sequential>
@@ -90,7 +90,7 @@
         </java>
     </target>
 
-    <target name="FEServer" description="Run a ece454750s15a1 server" depends="compile">
+    <target name="BEServer" description="Run a ece454750s15a1 BE server" depends="compile">
         <java classname="ece454750s15a1Server" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false" >
         </java>

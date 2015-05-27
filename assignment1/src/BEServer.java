@@ -12,13 +12,13 @@ import ece454750s15a1.*;
 
 public class BEServer {
 
-    public static A1PasswordHandler handler;
-    public static A1Password.Processor processor;
+    public static BEPasswordHandler handler;
+    public static BEPassword.Processor processor;
 
     public static void main(String[] args) {
         try {
-            handler = new A1PasswordHandler();
-            processor = new A1Password.Processor(handler);
+            handler = new BEPasswordHandler();
+            processor = new BEPassword.Processor(handler);
 
             Runnable simple = new Runnable() {
                 public void run() {
@@ -32,7 +32,7 @@ public class BEServer {
         }
     }
 
-    public static void simple(A1Password.Processor processor) {
+    public static void simple(BEPassword.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(11357);
             TServer server = new TSimpleServer(
