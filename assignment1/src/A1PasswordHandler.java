@@ -10,7 +10,7 @@ public class A1PasswordHandler implements A1Password.Iface {
         System.out.println("BCrypt.hashpw(" + password + "," + logRounds + ")");
 
         // Default log_rounds = 10
-        String hashed = BCrypt.hashpw(password, BCrypt.gensalt(10));
+        String hashed = BCrypt.hashpw(password, BCrypt.gensalt(logRounds));
         System.out.println("Hashed Password=" + hashed);
     
         return hashed;
