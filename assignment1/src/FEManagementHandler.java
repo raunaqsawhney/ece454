@@ -31,15 +31,12 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     }
 
-    /*
-   public boolean joinCluster(String host, int pport, int mport, int ncores){
+   public void joinCluster(String host, String pport, String mport, String ncores){
     
         beList.put("host", host);
         beList.put("pport",  String.valueOf(pport)); 
         beList.put("mport", String.valueOf(mport));
         beList.put("ncores", String.valueOf(ncores));
-    
-        return true;
         
-    }*/
+    }
 }
