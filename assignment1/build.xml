@@ -57,7 +57,7 @@
     <target name="test" depends="ece454750s15a1" />
 
     <!-- target name="ece454750s15a1" description="Run the assignment1" -->
-    <target name="ece454750s15a1" description="Run the assignment1" depends="compile" >
+    <target name="ece454750s15a1" description="Run the ece454750s15a1" depends="compile" >
         <jar jarfile="ece454750s15a1.jar" basedir="${build}"/>
         <parallel>
             <java classname="BEServer" fork="true" timeout="10000"
