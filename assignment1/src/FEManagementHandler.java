@@ -1,11 +1,17 @@
 import org.apache.thrift.TException;
+import java.util.*;
 import java.util.concurrent.*;
-
 
 //Generated code
 import ece454750s15a1.*;
 
 public class FEManagementHandler implements FEManagement.Iface {
+
+    private Map<String, String> beList = null;
+
+    public FEManagementHandler() {
+        beList = new ConcurrentHashMap<String, String>();
+    }
 
     public PerfCounters getPerfCounters() {
 
@@ -25,13 +31,15 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     }
 
-    boolean joinCluster(String host, short pport, short mport, short ncores){
-
-
-
-
-    }
-
-
-
+    /*
+   public boolean joinCluster(String host, int pport, int mport, int ncores){
+    
+        beList.put("host", host);
+        beList.put("pport",  String.valueOf(pport)); 
+        beList.put("mport", String.valueOf(mport));
+        beList.put("ncores", String.valueOf(ncores));
+    
+        return true;
+        
+    }*/
 }

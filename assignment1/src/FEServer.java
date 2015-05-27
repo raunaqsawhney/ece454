@@ -16,8 +16,12 @@ public class FEServer {
     public static FEManagement.Processor processor;
 
     public static void main(String[] args) {
+        for (int i = 0; i < args.length; i++){
+            System.out.println(args[i]);
+        }
+        
         try {
-            handler = new BEManagementHandler();
+            handler = new FEManagementHandler();
             processor = new FEManagement.Processor(handler);
 
             Runnable simple = new Runnable() {
@@ -32,7 +36,7 @@ public class FEServer {
         }
     }
 
-    public static void simple(BEManagement.Processor processor) {
+    public static void simple(FEManagement.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(

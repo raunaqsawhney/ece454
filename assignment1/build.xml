@@ -92,7 +92,7 @@
 
     <target name="BEServer" description="Run a ece454750s15a1 BE server" depends="compile">
         <java classname="ece454750s15a1Server" fork="true"
-              classpathref="ece454750s15a1.classpath" failonerror="false" >
+            classpathref="ece454750s15a1.classpath" failonerror="false" >
         </java>
     </target>
 
