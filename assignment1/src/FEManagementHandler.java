@@ -1,4 +1,6 @@
 import org.apache.thrift.TException;
+import java.util.concurrent.*;
+
 
 //Generated code
 import ece454750s15a1.*;
@@ -20,6 +22,13 @@ public class FEManagementHandler implements FEManagement.Iface {
         groupMembersList.add("Thomas Chen");
 
         return groupMembersList;
+
+    }
+
+    boolean joinCluster(String host, short pport, short mport, short ncores){
+
+
+
 
     }
 
