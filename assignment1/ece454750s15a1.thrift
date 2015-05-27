@@ -14,13 +14,25 @@ exception ServiceUnavailableException {
     1:string msg
 }
 
-service A1Password {
+service BEPassword {
     
     string hashPassword(1:string password, 2:i16 logRounds) throws (1:ServiceUnavailableException e),
     bool checkPassword(1:string password, 2:string hash)
 }
 
-service A1Management {
+service FEPassword {
+
+    string hashPassword(1:string password, 2:i16 logRounds) throws (1:ServiceUnavailableException e),
+    bool checkPassword(1:string password, 2:string hash)
+}
+
+service BEManagement {
     PerfCounters getPerfCounters(),
     list<string> getGroupMembers()
 }
+
+service FEManagement {
+    PerfCounters getPerfCounters(),
+    list<string> getGroupMembers()
+}
+
