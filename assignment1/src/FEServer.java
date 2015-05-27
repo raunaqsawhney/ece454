@@ -12,63 +12,36 @@ import ece454750s15a1.*;
 
 public class FEServer {
 
-    public static BEPasswordHandler handler;
-    public static BEPassword.Processor processor;
-    
+    public static FEManagementHandler handler;
+    public static FEManagement.Processor processor;
+
     public static void main(String[] args) {
         try {
+            handler = new BEManagementHandler();
+            processor = new FEManagement.Processor(handler);
 
-            managementPassword = new BEManagementHandler();
-            managementProcessor = new BEManagement.Processor(managementHander);
-
-            passwordHandler = new BEPasswordHandler();
-            passwordProcessor = new BEPassword.Processor(passwordHandler);
-
-            Runnable simpleManagement = new Runnable() {
+            Runnable simple = new Runnable() {
                 public void run() {
-                    simpleManagement(managementProcessor);
-                }
-            };
-            
-            new Thread(simpleManagement).start();
-
-            Runnable simplePassword = new Runnable() {
-                public void run() {
-                    simple(passwordProcessor);
+                    simple(processor);
                 }
             };
 
-            new Thread(simplePassword).start();
+            new Thread(simple).start();
         } catch (Exception x) {
             x.printStackTrace();
         }
     }
-     
-    public static void simpleManagement(BEManagement.Processor managementProcessor) {
+
+    public static void simple(BEManagement.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(
-                    new Args(serverTransport).processor(managementProcessor));
+                    new Args(serverTransport).processor(processor));
 
-            System.out.println("Starting the ece454750s15a1 Management server...");
+            System.out.println("Starting the ece454750s15a1 Simple Server...");
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
-    public static void simplePassword(BEManagement.Processor passwordProcessor) {
-        try {
-            TServerTransport serverTransport = new TServerSocket(1357);
-            TServer server = new TSimpleServer(
-                    new Args(serverTransport).processor(passwordProcessor));
-
-            System.out.println("Starting the ece454750s15a1 Password server...");
-            server.serve();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 }

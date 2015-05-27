@@ -33,6 +33,7 @@ service BEManagement {
 
 service FEManagement {
     PerfCounters getPerfCounters(),
-    list<string> getGroupMembers()
+    list<string> getGroupMembers(),
+    bool join_cluster(1:string host, 2:i16 pport, 3:i16 mport, 3:i16 ncores)
 }
 

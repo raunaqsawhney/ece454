@@ -16,7 +16,7 @@ public class BEManagementHandler implements BEManagement.Iface {
     }
 
     public ArrayList<String> getGroupMembers() {
-        ArrayList<String> groupMembersList = new ArrayList<>();
+        ArrayList<String> groupMembersList = new ArrayList();
 
         groupMembersList.add("Raunaq Sawhney");
         groupMembersList.add("Thomas Chen");

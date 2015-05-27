@@ -34,7 +34,7 @@ public class BEServer {
 
     public static void simple(BEPassword.Processor processor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(11357);
+            TServerTransport serverTransport = new TServerSocket(2357);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
