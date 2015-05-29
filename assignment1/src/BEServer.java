@@ -48,7 +48,7 @@ public class BEServer {
 
     public static void simple(BEPassword.Processor processor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(1357);
+            TServerTransport serverTransport = new TServerSocket(11357);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
@@ -93,12 +93,11 @@ public class BEServer {
 					}
 				}else{}
 			}
-		}catch(Exception x){
+		} catch (Exception x) {
 			System.out.println("There is an issue with the CLI arguments");
 			x.printStackTrace();
-		}	
-		
-		
+		}
+
 		try {
 			System.out.println("host: " + host);
 			System.out.println("pport: " + pport);
@@ -111,22 +110,23 @@ public class BEServer {
 				System.out.println(seed.host + " " + seed.mport);
 			}
 			
-			/*
+            int i = 0;
 			while (!seedList.empty())
-			{}
-			*/
+			{
+                TTransport transport;
+                transport = new TSocket(seedList[i].host, seedList[i].mport);
+                transport.open();
 
-			TTransport transport;
-            transport = new TSocket(seed_host, seed_management_port);
-            transport.open();
+                TProtocol protocol = new TBinaryProtocol(transport);
+                FEPassword.Client client = new BEPassword.Client(protocol);
 
-            TProtocol protocol = new TBinaryProtocol(transport);
-            FEPassword.Client client = new BEPassword.Client(protocol);
+                client.joinCluster(host, pport, mport, ncores);
 
-			client.joinCluster(host, String.valueOf(pport), String.valueOf(mport), String.valeueOf(ncores));
+                transport.close();
+                i++;
+            }
 
-            transport.close();
-		}catch(Exception x){
+		} catch(Exception x){
 			x.printStackTrace();
 		}
 	}

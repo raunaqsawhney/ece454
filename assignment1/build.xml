@@ -62,6 +62,7 @@
         <parallel>
             <java classname="BEServer" fork="true" timeout="10000"
                   classpathref="ece454750s15a1.classpath" failonerror="false" output="${build}/log/ece454750s15a1.log">
+                <arg line="-host localhost -pport 11357 -mport 21357 -ncores 2 -seeds ecelinux1:31357, ecelinux1:41357, ecelinux1:51357"/>
             </java>
             <sequential>
                 <sleep seconds="2"/>

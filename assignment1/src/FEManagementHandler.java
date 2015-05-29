@@ -7,7 +7,7 @@ import ece454750s15a1.*;
 
 public class FEManagementHandler implements FEManagement.Iface {
 
-    private Map<String, String> beList = null;
+    private Map<String, tring> beList = null;
 
     public FEManagementHandler() {
         beList = new ConcurrentHashMap<String, String>();
@@ -31,7 +31,7 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     }
 
-   public void joinCluster(String host, String pport, String mport, String ncores){
+   public void joinCluster(String host, int pport, int mport, int ncores){
         beList.put("host", host);
         beList.put("pport",  String.valueOf(pport)); 
         beList.put("mport", String.valueOf(mport));
