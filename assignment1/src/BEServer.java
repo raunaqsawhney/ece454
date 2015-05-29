@@ -62,7 +62,6 @@ public class BEServer {
 	public static void startup(String[] args) {
 
 		try {
-			int args_length = args.length;
 			seedList = new ArrayList<FEServer.FESeed>();
 			
 			for (int i = 0; i < args.length; i++){
@@ -81,11 +80,12 @@ public class BEServer {
 				}else if (args[i].equals("-seeds")){
 					i++;
 					String tempSeedString[];
-					FEServer.FESeed tempSeed = new FEServer.FESeed();
 					String tempSeedsList[] = args[i].split(",");
 					int numOfSeeds = tempSeedsList.length;
 					
 					for (int j = 0; j < numOfSeeds; j++){
+						FEServer.FESeed tempSeed = new FEServer.FESeed();
+
 						tempSeedString = tempSeedsList[j].split(":");
 						tempSeed.host = tempSeedString[0];
 						tempSeed.mport = Integer.parseInt(tempSeedString[1]);
@@ -113,7 +113,9 @@ public class BEServer {
 			
 			/*
 			while (!seedList.empty())
-			{}			
+			{}
+			*/
+
 			TTransport transport;
             transport = new TSocket(seed_host, seed_management_port);
             transport.open();
@@ -121,9 +123,9 @@ public class BEServer {
             TProtocol protocol = new TBinaryProtocol(transport);
             FEPassword.Client client = new BEPassword.Client(protocol);
 
-			client.joinCluster();
+			client.joinCluster(host, String.valueOf(pport), String.valueOf(mport), String.valeueOf(ncores));
 
-            transport.close();*/
+            transport.close();
 		}catch(Exception x){
 			x.printStackTrace();
 		}

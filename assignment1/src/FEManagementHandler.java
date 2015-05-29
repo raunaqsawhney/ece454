@@ -36,6 +36,5 @@ public class FEManagementHandler implements FEManagement.Iface {
         beList.put("pport",  String.valueOf(pport)); 
         beList.put("mport", String.valueOf(mport));
         beList.put("ncores", String.valueOf(ncores));
-        
     }
 }
