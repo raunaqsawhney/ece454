@@ -21,10 +21,13 @@ public class BEServer {
         public int ncores;
 	}
 
-    public static BEPasswordHandler handler;
-    public static BEPassword.Processor processor;
+    public static BEPasswordHandler passwordHandler;
+    public static BEPassword.Processor passwordProcessor;
 
-	public static String host;
+    public static BEManagementHandler managementHandler;
+    public static BEManagement.Processor managementProcessor;
+
+    public static String host;
 	public static int pport;
 	public static int mport;
 	public static int ncores;
@@ -39,36 +42,57 @@ public class BEServer {
 		}
 		
 		try {
-            handler = new BEPasswordHandler();
-            processor = new BEPassword.Processor(handler);
-/*
-            Runnable simple = new Runnable() {
+            passwordHandler = new BEPasswordHandler();
+            passwordProcessor = new BEPassword.Processor(passwordHandler);
+
+            managementHandler = new BEManagementHandler();
+            managementProcessor = new BEManagement.Processor(managementHandler);
+            
+            Runnable passwordPort = new Runnable() {
                 public void run() {
-                    simple(processor);
+                    passwordPort(passwordProcessor);
                 }
             };
 
-            new Thread(simple).start();*/
+            Runnable managementPort = new Runnable() {
+                public void run() {
+                    managementPort(managementProcessor);
+                }
+            };
+
+            new Thread(passwordPort).start();
+            new Thread(managementPort).start();
+        
         } catch (Exception x) {
             x.printStackTrace();
         }
     }
 
-    /*
-    public static void simple(BEPassword.Processor processor) {
+    public static void passwordPort(BEPassword.Processor passwordProcessor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(11357);
+            TServerTransport serverTransport = new TServerSocket(1357);
             TServer server = new TSimpleServer(
-                    new Args(serverTransport).processor(processor));
+                    new Args(serverTransport).processor(passwordProcessor));
 
-            System.out.println("Starting the ece454750s15a1 Simple Server...");
+            System.out.println("Starting the ece454750s15a1 Simple Server PASSWORD...");
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    */
 	
+    public static void managementPort(BEManagement.Processor mangementProcessor) {
+        try {
+            TServerTransport serverTransport = new TServerSocket(3975);
+            TServer server = new TSimpleServer(
+                    new Args(serverTransport).processor(managementProcessor));
+
+            System.out.println("Starting the ece454750s15a1 Simple Server Management...");
+            server.serve();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 	public static void startup(String[] args) {
 
 		try {
@@ -121,7 +145,7 @@ public class BEServer {
 				System.out.println(seed.host + " " + seed.mport);
 			}
 	
-            /*
+            /*        
             int i = 0;
 			while (!seedList.isEmpty())
 			{
