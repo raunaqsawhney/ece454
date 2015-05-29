@@ -12,6 +12,12 @@ import ece454750s15a1.*;
 
 public class FEServer {
 
+	public static class FESeed {
+		
+		public String host;
+		public int mport;
+	}
+
     public static FEManagementHandler handler;
     public static FEManagement.Processor processor;
 

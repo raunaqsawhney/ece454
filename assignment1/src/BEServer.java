@@ -6,6 +6,7 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+import java.util.*;
 
 // Generated code
 import ece454750s15a1.*;
@@ -15,18 +16,31 @@ public class BEServer {
     public static BEPasswordHandler handler;
     public static BEPassword.Processor processor;
 
+	public static String host;
+	public static int pport;
+	public static int mport;
+	public static int ncores;
+	public static List<FEServer.FESeed> seedList;
+	
     public static void main(String[] args) {
-        try {
+        
+		try{
+			startup(args);
+		}catch(Exception x){
+			x.printStackTrace();
+		}
+		
+		try {
             handler = new BEPasswordHandler();
             processor = new BEPassword.Processor(handler);
-
+/*
             Runnable simple = new Runnable() {
                 public void run() {
                     simple(processor);
                 }
             };
 
-            new Thread(simple).start();
+            new Thread(simple).start();*/
         } catch (Exception x) {
             x.printStackTrace();
         }
@@ -44,4 +58,74 @@ public class BEServer {
             e.printStackTrace();
         }
     }
+	
+	public static void startup(String[] args) {
+
+		try {
+			int args_length = args.length;
+			seedList = new ArrayList<FEServer.FESeed>();
+			
+			for (int i = 0; i < args.length; i++){
+				if (args[i].equals("-host")){
+					i++;
+					host = args[i];
+				}else if (args[i].equals("-pport")){
+					i++;
+					pport = Integer.parseInt(args[i]);
+				}else if (args[i].equals("-mport")){
+					i++;
+					mport = Integer.parseInt(args[i]);
+				}else if (args[i].equals("-ncores")){
+					i++;
+					ncores = Integer.parseInt(args[i]);
+				}else if (args[i].equals("-seeds")){
+					i++;
+					String tempSeedString[];
+					FEServer.FESeed tempSeed = new FEServer.FESeed();
+					String tempSeedsList[] = args[i].split(",");
+					int numOfSeeds = tempSeedsList.length;
+					
+					for (int j = 0; j < numOfSeeds; j++){
+						tempSeedString = tempSeedsList[j].split(":");
+						tempSeed.host = tempSeedString[0];
+						tempSeed.mport = Integer.parseInt(tempSeedString[1]);
+						seedList.add(tempSeed);
+					}
+				}else{}
+			}
+		}catch(Exception x){
+			System.out.println("There is an issue with the CLI arguments");
+			x.printStackTrace();
+		}	
+		
+		
+		try {
+			System.out.println("host: " + host);
+			System.out.println("pport: " + pport);
+			System.out.println("mport: " + mport);
+			System.out.println("ncores: " + ncores);
+			
+			System.out.println();
+			System.out.println("Seeds:");
+			for (FEServer.FESeed seed : seedList){
+				System.out.println(seed.host + " " + seed.mport);
+			}
+			
+			/*
+			while (!seedList.empty())
+			{}			
+			TTransport transport;
+            transport = new TSocket(seed_host, seed_management_port);
+            transport.open();
+
+            TProtocol protocol = new TBinaryProtocol(transport);
+            FEPassword.Client client = new BEPassword.Client(protocol);
+
+			client.joinCluster();
+
+            transport.close();*/
+		}catch(Exception x){
+			x.printStackTrace();
+		}
+	}
 }
