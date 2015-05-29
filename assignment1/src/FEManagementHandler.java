@@ -7,7 +7,7 @@ import ece454750s15a1.*;
 
 public class FEManagementHandler implements FEManagement.Iface {
 
-    private Map<String, tring> beList = null;
+    private Map<String, String> beList = null;
 
     public FEManagementHandler() {
         beList = new ConcurrentHashMap<String, String>();

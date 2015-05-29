@@ -20,7 +20,7 @@ public class BEServer {
 	public static int pport;
 	public static int mport;
 	public static int ncores;
-	public static List<FEServer.FESeed> seedList;
+	public static ArrayList<FEServer.FESeed> seedList;
 	
     public static void main(String[] args) {
         
@@ -46,6 +46,7 @@ public class BEServer {
         }
     }
 
+    /*
     public static void simple(BEPassword.Processor processor) {
         try {
             TServerTransport serverTransport = new TServerSocket(11357);
@@ -58,6 +59,7 @@ public class BEServer {
             e.printStackTrace();
         }
     }
+    */
 	
 	public static void startup(String[] args) {
 
@@ -82,7 +84,8 @@ public class BEServer {
 					String tempSeedString[];
 					String tempSeedsList[] = args[i].split(",");
 					int numOfSeeds = tempSeedsList.length;
-					
+			        System.out.println(String.valueOf(numOfSeeds));
+
 					for (int j = 0; j < numOfSeeds; j++){
 						FEServer.FESeed tempSeed = new FEServer.FESeed();
 
@@ -109,9 +112,10 @@ public class BEServer {
 			for (FEServer.FESeed seed : seedList){
 				System.out.println(seed.host + " " + seed.mport);
 			}
-			
+	
+            /*
             int i = 0;
-			while (!seedList.empty())
+			while (!seedList.isEmpty())
 			{
                 TTransport transport;
                 transport = new TSocket(seedList[i].host, seedList[i].mport);
@@ -124,7 +128,7 @@ public class BEServer {
 
                 transport.close();
                 i++;
-            }
+            }*/
 
 		} catch(Exception x){
 			x.printStackTrace();
