@@ -6,6 +6,11 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+
 import java.util.*;
 
 // Generated code
@@ -34,14 +39,14 @@ public class BEServer {
 	public static ArrayList<FEServer.FESeed> seedList;
 	
     public static void main(String[] args) {
-        
-		try{
-			startup(args);
-		}catch(Exception x){
-			x.printStackTrace();
-		}
 		
-		try {
+		try{
+		    startup(args);
+	    } catch(Exception x) {
+            x.printStackTrace();
+	    }
+
+        try {
             passwordHandler = new BEPasswordHandler();
             passwordProcessor = new BEPassword.Processor(passwordHandler);
 
@@ -145,22 +150,21 @@ public class BEServer {
 				System.out.println(seed.host + " " + seed.mport);
 			}
 	
-            /*        
             int i = 0;
 			while (!seedList.isEmpty())
 			{
                 TTransport transport;
-                transport = new TSocket(seedList[i].host, seedList[i].mport);
+                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
                 transport.open();
 
                 TProtocol protocol = new TBinaryProtocol(transport);
-                FEPassword.Client client = new BEPassword.Client(protocol);
+                FEManagement.Client client = new FEManagement.Client(protocol);
 
                 client.joinCluster(host, pport, mport, ncores);
 
                 transport.close();
                 i++;
-            }*/
+            }
 
 		} catch(Exception x){
 			x.printStackTrace();
