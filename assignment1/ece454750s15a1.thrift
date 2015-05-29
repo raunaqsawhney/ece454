@@ -34,6 +34,6 @@ service BEManagement {
 service FEManagement {
     PerfCounters getPerfCounters(),
     list<string> getGroupMembers(),
-    void joinCluster(1:string host, 2:string pport, 3:string mport, 4:string ncores)
+    void joinCluster(1:string host, 2:i32 pport, 3:i32 mport, 4:i32 ncores)
 }
 

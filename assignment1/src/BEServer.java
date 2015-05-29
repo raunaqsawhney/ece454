@@ -13,6 +13,14 @@ import ece454750s15a1.*;
 
 public class BEServer {
 
+	public static class BENode {
+		
+		public String host;
+		public int pport;
+        public int mport;
+        public int ncores;
+	}
+
     public static BEPasswordHandler handler;
     public static BEPassword.Processor processor;
 
