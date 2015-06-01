@@ -7,21 +7,28 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import java.util.*;
 
 public class Client {
+	
+	private static String host;
+	private static int pport;
+	
     public static void main(String [] args) {
-        if (args.length != 1 || !args[0].contains("simple")) {
-            System.out.println("Please enter 'simple' ");
+        if (args.length < 2) {
             System.exit(0);
-        }
+        }else{
+			host = args[0];
+			pport = Integer.parseInt(args[1]);
+		}
 
         try {
             TTransport transport;
-            transport = new TSocket("localhost", 11357);
+            transport = new TSocket(host, pport);
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
-            BEPassword.Client client = new BEPassword.Client(protocol);
+            FEPassword.Client client = new FEPassword.Client(protocol);
 
             perform(client);
 
@@ -31,7 +38,7 @@ public class Client {
         }
     }
 
-    private static void perform(BEPassword.Client client) throws TException  {
+    private static void perform(FEPassword.Client client) throws TException  {
         
         String passwordHash = client.hashPassword("password", (short) 10);
         System.out.println("Password Hash=" + passwordHash);
