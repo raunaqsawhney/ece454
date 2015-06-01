@@ -31,7 +31,7 @@ public class FEServer {
 	public static int mport;
 	public static int ncores;
 	public static ArrayList<FEServer.FESeed> seedList;
-	public static CopyOnWriteArrayList<BEServer.BENode> beList;
+	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	
     public static void main(String[] args) {
        

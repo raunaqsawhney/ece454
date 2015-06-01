@@ -123,7 +123,7 @@ public class BEServer {
 					int numOfSeeds = tempSeedsList.length;
 			        System.out.println(String.valueOf(numOfSeeds));
 
-					for (int j = 0; j < numOfSeeds - 1; j++){
+					for (int j = 0; j < numOfSeeds; j++){
 						FEServer.FESeed tempSeed = new FEServer.FESeed();
 
 						tempSeedString = tempSeedsList[j].split(":");
@@ -151,11 +151,11 @@ public class BEServer {
 			}
 	
             int i = 0;
-			while (!seedList.isEmpty())
+			while (i < seedList.size())
 			{
                 TTransport transport;
                 transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
-                transport.open();
+				transport.open();
 
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
