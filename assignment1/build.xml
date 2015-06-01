@@ -91,12 +91,20 @@
         </java>
     </target>
 
-	<target name="BEServer" description="Run a ece454750s15a1 BE server" depends="compile">
-        <echo>Starting BEServer</echo>
-		<java classname="BEServer" fork="true"
-           	 classpathref="ece454750s15a1.classpath" failonerror="false" >
-                	<arg line="-host localhost -pport 1357 -mport 3975 -ncores 2 -seeds eceubuntu:1375,eceubuntu:5739"/>
-        	</java>
+    <target name="BEServer" description="Run BEServer" depends="compile">
+        <echo>[ece454750s15a1] BEServer</echo>
+        <java classname="BEServer" fork="true"
+              classpathref="ece454750s15a1.classpath" failonerror="false">
+            <arg line="-host localhost -pport 11357 -mport 13975 -ncores 2 -seeds localhost:9999"/>
+        </java>
+    </target>
+
+    <target name="FEServer" description="Run FEServer" depends="compile">
+        <echo>[ece454750s15a1] FEServer</echo>
+        <java classname="FEServer" fork="true"
+              classpathref="ece454750s15a1.classpath" failonerror="false">
+            <arg line="-host localhost -pport 21357 -mport 23975 -ncores 2 -seeds localhost:9999"/>
+        </java>
     </target>
 	
     <target name="FEBEServer" description="Run a ece454750s15a1 BE server" depends="compile">
