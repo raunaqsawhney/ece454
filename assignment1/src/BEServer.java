@@ -153,6 +153,7 @@ public class BEServer {
             int i = 0;
 			while (i < seedList.size())
 			{
+				System.out.println("SEEDLIST HOST: " + seedList.get(i).host + "SEEDLIST MPORT " + seedList.get(i).mport);
                 TTransport transport;
                 transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
 				transport.open();
