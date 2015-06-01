@@ -75,7 +75,7 @@ public class BEServer {
 
     public static void passwordPort(BEPassword.Processor passwordProcessor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(1357);
+            TServerTransport serverTransport = new TServerSocket(pport);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(passwordProcessor));
 
@@ -88,7 +88,7 @@ public class BEServer {
 	
     public static void managementPort(BEManagement.Processor mangementProcessor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(3975);
+            TServerTransport serverTransport = new TServerSocket(mport);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(managementProcessor));
 
@@ -123,7 +123,7 @@ public class BEServer {
 					int numOfSeeds = tempSeedsList.length;
 			        System.out.println(String.valueOf(numOfSeeds));
 
-					for (int j = 0; j < numOfSeeds; j++){
+					for (int j = 0; j < numOfSeeds - 1; j++){
 						FEServer.FESeed tempSeed = new FEServer.FESeed();
 
 						tempSeedString = tempSeedsList[j].split(":");

@@ -32,15 +32,18 @@ public class FEServer {
 	public static ArrayList<FEServer.FESeed> seedList;
 	
     public static void main(String[] args) {
-        for (int i = 0; i < args.length; i++){
-            System.out.println(args[i]);
-        }
-        
+       
+	   	try{
+		    startup(args);
+	    } catch(Exception x) {
+            x.printStackTrace();
+	    }
+	   
         try {
 			passwordHandler = new FEPasswordHandler();
             passwordProcessor = new FEPassword.Processor(passwordHandler);
 			
-            managementHandler = new FEManagementHandler();
+            managementHandler = new FEManagementHandler(seedList);	
             managementProcessor = new FEManagement.Processor(managementHandler);
 
             Runnable passwordPort = new Runnable() {
@@ -64,7 +67,7 @@ public class FEServer {
 
 	public static void passwordPort(FEPassword.Processor processor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(11357);
+            TServerTransport serverTransport = new TServerSocket(pport);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
@@ -77,7 +80,7 @@ public class FEServer {
 	
     public static void managementPort(FEManagement.Processor processor) {
         try {
-            TServerTransport serverTransport = new TServerSocket(13975);
+            TServerTransport serverTransport = new TServerSocket(mport);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 

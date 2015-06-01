@@ -7,10 +7,12 @@ import ece454750s15a1.*;
 
 public class FEManagementHandler implements FEManagement.Iface {
 
+	private ArrayList<FEServer.FESeed> seedList;
     private Map<String, String> beList = null;
     
-    public FEManagementHandler() {
-        beList = new ConcurrentHashMap<String, String>();
+    public FEManagementHandler(ArrayList<FEServer.FESeed> seedList) {
+        this.seedList = seedList;
+		beList = new ConcurrentHashMap<String, String>();
     }
 
     public PerfCounters getPerfCounters() {
