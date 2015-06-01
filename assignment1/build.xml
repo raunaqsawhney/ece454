@@ -95,7 +95,7 @@
         <echo>[ece454750s15a1] BEServer</echo>
         <java classname="BEServer" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host localhost -pport 11357 -mport 13975 -ncores 2 -seeds localhost:9999"/>
+            <arg line="-host localhost -pport 41357 -mport 43975 -ncores 2 -seeds localhost:33975"/>
         </java>
     </target>
 
@@ -103,7 +103,7 @@
         <echo>[ece454750s15a1] FEServer</echo>
         <java classname="FEServer" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host localhost -pport 21357 -mport 23975 -ncores 2 -seeds localhost:9999"/>
+            <arg line="-host eceubuntu -pport 31357 -mport 33975 -ncores 2 -seeds eceubuntu:33975"/>
         </java>
     </target>
 	

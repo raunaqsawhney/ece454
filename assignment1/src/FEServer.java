@@ -74,6 +74,7 @@ public class FEServer {
                     new Args(serverTransport).processor(processor));
 
             System.out.println("Starting the ece454750s15a1 Simple FE Password Server...");
+            System.out.println("[FEServer] pport = " + pport);
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,6 +88,7 @@ public class FEServer {
                     new Args(serverTransport).processor(processor));
 
             System.out.println("Starting the ece454750s15a1 Simple FE Management Server...");
+            System.out.println("[FEServer] mport = " + mport);
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();

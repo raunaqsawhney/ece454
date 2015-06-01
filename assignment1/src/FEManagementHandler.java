@@ -42,5 +42,7 @@ public class FEManagementHandler implements FEManagement.Iface {
        beNode.ncores = ncores;
 
        beList.add(beNode);
+
+       System.out.println("[FEManagementHandler] Added BE to cluster");
    }
 }

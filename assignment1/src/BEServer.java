@@ -80,6 +80,7 @@ public class BEServer {
                     new Args(serverTransport).processor(passwordProcessor));
 
             System.out.println("Starting the ece454750s15a1 Simple Server PASSWORD...");
+            System.out.println("[BEServer] pport = " + pport);
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,6 +94,7 @@ public class BEServer {
                     new Args(serverTransport).processor(managementProcessor));
 
             System.out.println("Starting the ece454750s15a1 Simple Server Management...");
+            System.out.println("[BEServer] mport = " + mport);
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,14 +157,20 @@ public class BEServer {
 			{
 				System.out.println("SEEDLIST HOST: " + seedList.get(i).host + "SEEDLIST MPORT " + seedList.get(i).mport);
                 TTransport transport;
+                System.out.println("[BEServer] seedList.get(" + i + ").host = " + seedList.get(i).host);
+                System.out.println("[BEServer] seedList.get(" + i + ").mport = " + seedList.get(i).mport);
                 transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
 				transport.open();
 
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
+                System.out.println("host, pport, mport, ncores");
+                System.out.println(host + " " +  pport + " " + mport + " " + ncores);
+                
+                System.out.println("About to join cluster");
                 client.joinCluster(host, pport, mport, ncores);
-
+                System.out.println("Joined Cluster");
                 transport.close();
                 i++;
             }
