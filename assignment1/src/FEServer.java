@@ -7,6 +7,7 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import java.util.*;
+import java.util.concurrent.*;
 
 // Generated code
 import ece454750s15a1.*;
@@ -30,6 +31,7 @@ public class FEServer {
 	public static int mport;
 	public static int ncores;
 	public static ArrayList<FEServer.FESeed> seedList;
+	public static CopyOnWriteArrayList<BEServer.BENode> beList;
 	
     public static void main(String[] args) {
        
@@ -40,10 +42,10 @@ public class FEServer {
 	    }
 	   
         try {
-			passwordHandler = new FEPasswordHandler();
+			passwordHandler = new FEPasswordHandler(beList);
             passwordProcessor = new FEPassword.Processor(passwordHandler);
 			
-            managementHandler = new FEManagementHandler(seedList);	
+            managementHandler = new FEManagementHandler(seedList,beList);	
             managementProcessor = new FEManagement.Processor(managementHandler);
 
             Runnable passwordPort = new Runnable() {

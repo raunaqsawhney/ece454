@@ -8,11 +8,11 @@ import ece454750s15a1.*;
 public class FEManagementHandler implements FEManagement.Iface {
 
 	private ArrayList<FEServer.FESeed> seedList;
-    private Map<String, String> beList = null;
+    private CopyOnWriteArrayList<BEServer.BENode> beList = null;
     
-    public FEManagementHandler(ArrayList<FEServer.FESeed> seedList) {
+    public FEManagementHandler(ArrayList<FEServer.FESeed> seedList, CopyOnWriteArrayList<BEServer.BENode> beList) {
         this.seedList = seedList;
-		beList = new ConcurrentHashMap<String, String>();
+		this.beList = beList;
     }
 
     public PerfCounters getPerfCounters() {
@@ -41,9 +41,6 @@ public class FEManagementHandler implements FEManagement.Iface {
        beNode.mport = mport;
        beNode.ncores = ncores;
 
-       beList.put("host", host);
-       beList.put("pport", String.valueOf(pport));
-       beList.put("mport", String.valueOf(mport));
-       beList.put("ncores", String.valueOf(ncores));
+       beList.add(beNode);
    }
 }
