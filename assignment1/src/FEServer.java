@@ -41,7 +41,7 @@ public class FEServer {
 			startup(args);
 
 			// Differentiate between FESeed and FEServer
-			if (pport) {
+			if (pport != 0) {
 				// FE is FE Node
 				passwordHandler = new FEPasswordHandler(beList);
 				passwordProcessor = new FEPassword.Processor(passwordHandler);
@@ -157,7 +157,7 @@ public class FEServer {
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
-			if (pport) {
+			if (pport != 0) {
 				System.out.println("Starting the ece454750s15a1 Simple FE Management Server...");
 				System.out.println("[FEServer] mport = " + mport);
 			} else {
