@@ -62,8 +62,14 @@ public class FEServer {
 //				}
 //			}
 
-			passwordHandler = new FEPasswordHandler(beList, perfManager);
-			passwordProcessor = new FEPassword.Processor(passwordHandler);
+//			passwordHandler = new FEPasswordHandler(beList, perfManager);
+//			passwordProcessor = new FEPassword.Processor(passwordHandler);
+
+//			Runnable passwordPort = new Runnable() {
+//				public void run() {
+//					passwordPort(passwordProcessor);
+//				}
+//			};
 
 			managementHandler = new FEManagementHandler(beList, perfManager, serviceUpTime);
 			managementProcessor = new FEManagement.Processor(managementHandler);
@@ -74,19 +80,13 @@ public class FEServer {
 				}
 			};
 
-			Runnable passwordPort = new Runnable() {
-				public void run() {
-					passwordPort(passwordProcessor);
-				}
-			};
-
 			new Thread(managementPort).start();
-			new Thread(passwordPort).start();
+			//new Thread(passwordPort).start();
 
 			// Record time of when the service is started
 			serviceUpTime = System.currentTimeMillis();
 
-			//openPasswordPort();
+			openPasswordPort();
 
 		} catch (Exception x) {
 			x.printStackTrace();
