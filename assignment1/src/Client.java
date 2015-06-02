@@ -49,8 +49,8 @@ public class Client {
         checkPassword = client.checkPassword("ThisIsNotThePassword", passwordHash);
         System.out.println("[Client] Check Password (Should Fail) =" + checkPassword);
 
-        PerfCounter perfCounter = new PerfCounter();
-        perfCounter = client.getPerfCounters();
+        PerfCounters perfCounter = new PerfCounter();
+        perfCounters = client.getPerfCounters();
 
         System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
 

@@ -6,7 +6,7 @@ import ece454750s15a1.*;
 
 public class BEPasswordHandler implements BEPassword.Iface {
 
-    private PerfCounter perfCounter = new PerfCounter();
+    private PerfCounters perfCounter = new PerfCounter();
 
     public String hashPassword(String password, short logRounds) {
 

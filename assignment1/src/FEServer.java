@@ -35,7 +35,7 @@ public class FEServer {
 	public static int mport;
 	public static int ncores;
 
-	public static PerfCounter perfManager = new PerfCounter();
+	public static PerfCounters perfManager = new PerfCounter();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	
     public static void main(String[] args) {
