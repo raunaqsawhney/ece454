@@ -40,14 +40,14 @@ public class Client {
 
     private static void perform(FEPassword.Client client) throws TException  {
         
-        String passwordHash = client.hashPassword("password", (short) 10);
-        System.out.println("Password Hash=" + passwordHash);
+        String passwordHash = client.hashPassword("ThisIsThePassword", (short) 10);
+        System.out.println("[Client] Password Hash =" + passwordHash);
 
-        boolean checkPassword = client.checkPassword("password", passwordHash);
-        System.out.println("Check Password PASS=" + checkPassword);
+        boolean checkPassword = client.checkPassword("ThisIsThePassword", passwordHash);
+        System.out.println("[Client] Check Password (Should Pass) =" + checkPassword);
 
-        checkPassword = client.checkPassword("password_wrong", passwordHash);
-        System.out.println("Check Password FAIL=" + checkPassword);
+        checkPassword = client.checkPassword("ThisIsNotThePassword", passwordHash);
+        System.out.println("[Client] Check Password (Should Fail) =" + checkPassword);
 
     }
 }

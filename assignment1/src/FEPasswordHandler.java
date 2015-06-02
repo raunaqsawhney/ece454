@@ -44,16 +44,15 @@ public class FEPasswordHandler implements FEPassword.Iface {
     } catch (TException x) {
             x.printStackTrace();
     }
-	
-        // Implement forwarding of request
-
+		// Receive hashed password from BENode and return to client
         return hashedPassword;
     }
 
     public boolean checkPassword(String password, String hash) {
 	
 		// TODO: Load balancing , retry connections, exception handling when no servers available
-	
+		// Step 8 TODO: Smart connection pooling, reuse connections.
+
 		boolean result = false;
 		Random rand = new Random();	
 		int beServerIndex = rand.nextInt(beList.size());
@@ -73,6 +72,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 				x.printStackTrace();
 		}
 
+		// Received result of checkPassword from BENode and return to client
         return result;
     }
 
