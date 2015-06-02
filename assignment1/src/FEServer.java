@@ -60,7 +60,7 @@ public class FEServer {
 			passwordHandler = new FEPasswordHandler(beList, perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-			managementHandler = new FEManagementHandler(beList, perfManager);
+			managementHandler = new FEManagementHandler(beList, perfManager, serviceUpTime);
 			managementProcessor = new FEManagement.Processor(managementHandler);
 
 			Runnable passwordPort = new Runnable() {

@@ -53,9 +53,9 @@ public class Client {
 
     }
 
-    private static void perform(FEManagement.Client client_man) throws TException {
+    private static void perform_man(FEManagement.Client client_man) throws TException {
         PerfCounters perfCounter = new PerfCounters();
-        perfCounters = client.getPerfCounters();
+        perfCounter = client_man.getPerfCounters();
 
         System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
 

@@ -25,7 +25,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 		this.beList = beList;
 		this.perfCounter = perfCounter;
 	}
-
+/*
 	public int balanceLoad () {
 		// Must return the index of the BE Server to use for servicing the load in the BEList
 
@@ -52,7 +52,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 
 	}
-
+*/
 
     public String hashPassword(String password, short logRounds) {
 	

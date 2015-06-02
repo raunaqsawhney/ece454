@@ -15,7 +15,7 @@ public class FEManagementHandler implements FEManagement.Iface {
     private Long serviceUpTime;
 
 
-    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounters perfManager, serviceUpTime) {
+    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounters perfManager, Long serviceUpTime) {
         this.beList = beList;
         this.perfManager = perfManager;
     }
