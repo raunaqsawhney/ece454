@@ -41,19 +41,7 @@ public class FEServer {
 			startup(args);
 
 			// Differentiate between FESeed and FEServer
-			if (!pport) {
-				// FE is FE Seed
-				managementHandler = new FEManagementHandler(seedList, beList);
-				managementProcessor = new FEManagement.Processor(managementHandler);
-
-				Runnable managementPort = new Runnable() {
-					public void run() {
-						managementPort(managementProcessor);
-					}
-				};
-
-				new Thread(managementPort).start();
-			} else {
+			if (pport) {
 				// FE is FE Node
 				passwordHandler = new FEPasswordHandler(beList);
 				passwordProcessor = new FEPassword.Processor(passwordHandler);
@@ -74,6 +62,18 @@ public class FEServer {
 				};
 
 				new Thread(passwordPort).start();
+				new Thread(managementPort).start();
+			} else {
+				// FE is FE Seed
+				managementHandler = new FEManagementHandler(seedList, beList);
+				managementProcessor = new FEManagement.Processor(managementHandler);
+
+				Runnable managementPort = new Runnable() {
+					public void run() {
+						managementPort(managementProcessor);
+					}
+				};
+
 				new Thread(managementPort).start();
 			}
 		} catch (Exception x) {
@@ -157,11 +157,11 @@ public class FEServer {
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
-			if (!pport) {
-				System.out.println("Starting the ece454750s15a1 Simple Management FESeed...");
+			if (pport) {
+				System.out.println("Starting the ece454750s15a1 Simple FE Management Server...");
 				System.out.println("[FEServer] mport = " + mport);
 			} else {
-				System.out.println("Starting the ece454750s15a1 Simple FE Management Server...");
+				System.out.println("Starting the ece454750s15a1 Simple Management FESeed...");
 				System.out.println("[FEServer] mport = " + mport);
 			}
 
