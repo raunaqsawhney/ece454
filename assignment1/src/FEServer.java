@@ -11,8 +11,6 @@ import java.lang.System;
 import java.util.*;
 import java.util.concurrent.*;
 
-new java.util.Date();
-
 // Generated code
 import ece454750s15a1.*;
 
@@ -35,6 +33,8 @@ public class FEServer {
 	public static int mport;
 	public static int ncores;
 
+
+    public static ArrayList<FEServer.FESeed> seedList;
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	

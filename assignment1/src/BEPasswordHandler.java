@@ -8,6 +8,10 @@ public class BEPasswordHandler implements BEPassword.Iface {
 
     private PerfCounters perfCounter = new PerfCounters();
 
+	public BEPasswordHandler(PerfCounters perfCounter) {
+		this.perfCounter = perfCounter;
+	}
+
     public String hashPassword(String password, short logRounds) {
 
         // Default log_rounds = 10
