@@ -49,7 +49,7 @@ public class Client {
         checkPassword = client.checkPassword("ThisIsNotThePassword", passwordHash);
         System.out.println("[Client] Check Password (Should Fail) =" + checkPassword);
 
-        PerfCounters perfCounter = new PerfCounter();
+        PerfCounters perfCounter = new PerfCounters();
         perfCounters = client.getPerfCounters();
 
         System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
