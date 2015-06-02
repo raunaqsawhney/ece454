@@ -8,9 +8,12 @@ import org.apache.thrift.protocol.TProtocol;
 
 
 import org.mindrot.jbcrypt.BCrypt;
+
+import java.lang.System;
 import java.util.*;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.concurrent.*;
 
 //Generated code
@@ -25,42 +28,44 @@ public class FEPasswordHandler implements FEPassword.Iface {
 		this.beList = beList;
 		this.perfCounter = perfCounter;
 	}
-/*
-	public int balanceLoad () {
-		// Must return the index of the BE Server to use for servicing the load in the BEList
 
-		BEServer.BENode currentBE = new BEServer.BENode();
-		BEServer.BENode maxBE = new BEServer.BENode();
+	public int balanceLoad() {
 
-		// Step 1: Determine total weights of all known BE Servers and find the BE with most nodes
-		int totalCurrentWeight;
+		Random randGen = new Random();
+		int totalCurrentWeight = 0;
+		int randomBENodeIndex = 0;
+
+		randGen.setSeed(System.currentTimeMillis());
+
+		// Step 1: Determine the total weights of all known BE Servers
 		for (int i = 0; i < beList.size(); i++) {
-
-			currentBE = beList.get(i);
-			totalCurrentWeight += currentBE.ncores;
-
-			if (currentBE.ncores >= maxBE.ncores) {
-				maxBE = currentBE;
-			}
+			totalCurrentWeight += beList.get(i).ncores;
 		}
 
-//		//Step 2: Have the BE that could potentially be used to forward the request to
-//		if (maxBE.numConnections <= maxBE.ncores) {
-//
-//			// Forward the request to this BE Node
-//		}
+		System.out.println("[FEPasswordHandler] TotalCurrentWeight = " + totalCurrentWeight);
+
+		randomBENodeIndex = randGen.nextInt(totalCurrentWeight);
+		System.out.println("[FEPasswordHandler] randomBENodeIndex = " + randomBENodeIndex);
 
 
+		for (int i = 0; i < beList.size(); i++) {
+			if (randomBENodeIndex < beList.get(i).ncores) {
+
+				// Returns index of BEServer in BEList to use for request
+				return i;
+			}
+			randomBENodeIndex -= beList.get(i).ncores;
+		}
 	}
-*/
 
     public String hashPassword(String password, short logRounds) {
 	
 	// TODO: Load balancing (Should be implemented as seperate function), retry connections, exception handling when no servers available
 	
 	String hashedPassword = null;
-	Random rand = new Random();	
-	int beServerIndex = rand.nextInt(beList.size());
+	Random rand = new Random();
+	int beServerIndex = balanceLoad();
+	System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
 
 	try {
             TTransport transport;
@@ -70,11 +75,11 @@ public class FEPasswordHandler implements FEPassword.Iface {
             TProtocol protocol = new TBinaryProtocol(transport);
             BEPassword.Client client = new BEPassword.Client(protocol);
 
-		System.out.println("[FEPasswordHandler] Password to HASH = " + password);
+			System.out.println("[FEPasswordHandler] Password to HASH = " + password);
 
-		perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
-		hashedPassword = client.hashPassword(password, logRounds);
-		perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
+			perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
+			hashedPassword = client.hashPassword(password, logRounds);
+			perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
 
             transport.close();
     } catch (TException x) {
@@ -87,8 +92,6 @@ public class FEPasswordHandler implements FEPassword.Iface {
         return hashedPassword;
     }
 
-
-
     public boolean checkPassword(String password, String hash) {
 	
 		// TODO: Load balancing , retry connections, exception handling when no servers available
@@ -96,7 +99,8 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 		boolean result = false;
 		Random rand = new Random();	
-		int beServerIndex = rand.nextInt(beList.size());
+		int beServerIndex = balanceLoad();
+		System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
 		
 		try {
 				TTransport transport;
@@ -122,5 +126,4 @@ public class FEPasswordHandler implements FEPassword.Iface {
 		// Received result of checkPassword from BENode and return to client
         return result;
     }
-
 }
