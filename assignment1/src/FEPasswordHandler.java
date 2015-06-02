@@ -38,7 +38,9 @@ public class FEPasswordHandler implements FEPassword.Iface {
             TProtocol protocol = new TBinaryProtocol(transport);
             BEPassword.Client client = new BEPassword.Client(protocol);
 
-            hashedPassword = client.hashPassword(password, logRounds);
+		System.out.println("[FEPasswordHandler] Password to HASH = " + password);
+
+		hashedPassword = client.hashPassword(password, logRounds);
 
             transport.close();
     } catch (TException x) {
@@ -68,7 +70,9 @@ public class FEPasswordHandler implements FEPassword.Iface {
 				TProtocol protocol = new TBinaryProtocol(transport);
 				BEPassword.Client client = new BEPassword.Client(protocol);
 
-				result = client.checkPassword(password, hash);
+			System.out.println("[FEPasswordHandler] Password to Check= " + password);
+
+			result = client.checkPassword(password, hash);
 				System.out.println("[FEPasswordHandler] checkPassword RESULT= " + result);
 
 				transport.close();
