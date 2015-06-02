@@ -24,17 +24,23 @@ public class Client {
 		}
 
         try {
-            TSocket socket = new TSocket(host, pport);
-			TTransport transport = new TFramedTransport(socket);
-			 
+
+            TTransport transport;
+            transport = new TSocket(host, pport);
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
             FEPassword.Client client = new FEPassword.Client(protocol);
-            FEManagement.Client client_man = new FEManagement.Client(protocol);
+
+//            TSocket socket = new TSocket(host, pport);
+//			TTransport transport = new TFramedTransport(socket);
+//
+//            transport.open();
+//
+//            TProtocol protocol = new TBinaryProtocol(transport);
+//            FEPassword.Client client = new FEPassword.Client(protocol);
 
             perform(client);
-            //perform_man(client_man);
 
             transport.close();
         } catch (TException x) {

@@ -52,15 +52,15 @@ public class FEServer {
 			// Start parsing the CLI
 			startup(args);
 
-			boolean isFESeed = false;
+//			boolean isFESeed = false;
 
-			// Differentiate between FESeed and FEServer
-			for (FEServer.FESeed feSeed : seedList) {
-				if (host == feSeed.host && mport == feSeed.mport) {
-					System.out.println("[FEServer] FE Node with host " + feSeed.host + " and mport " + feSeed.mport
-						+ " is an FESeed");
-				}
-			}
+//			// Differentiate between FESeed and FEServer
+//			for (FEServer.FESeed feSeed : seedList) {
+//				if (host == feSeed.host && mport == feSeed.mport) {
+//					System.out.println("[FEServer] FE Node with host " + feSeed.host + " and mport " + feSeed.mport
+//						+ " is an FESeed");
+//				}
+//			}
 
 			passwordHandler = new FEPasswordHandler(beList, perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
