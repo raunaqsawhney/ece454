@@ -6,8 +6,12 @@ import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+
+import java.lang.System;
 import java.util.*;
 import java.util.concurrent.*;
+
+new java.util.Date();
 
 // Generated code
 import ece454750s15a1.*;
@@ -30,7 +34,8 @@ public class FEServer {
 	public static int pport;
 	public static int mport;
 	public static int ncores;
-	public static ArrayList<FEServer.FESeed> seedList;
+
+	public static PerfCounter perfManager = new PerfCounter();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	
     public static void main(String[] args) {
@@ -50,10 +55,10 @@ public class FEServer {
 				}
 			}
 
-			passwordHandler = new FEPasswordHandler(beList);
+			passwordHandler = new FEPasswordHandler(beList, perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-			managementHandler = new FEManagementHandler(seedList, beList);
+			managementHandler = new FEManagementHandler(beList, perfManager);
 			managementProcessor = new FEManagement.Processor(managementHandler);
 
 			Runnable passwordPort = new Runnable() {
@@ -70,6 +75,9 @@ public class FEServer {
 
 			new Thread(passwordPort).start();
 			new Thread(managementPort).start();
+
+			// Record time of when the service is started
+			perfManager.numSecondsUp = System.currentTimeMillis();
 
 		} catch (Exception x) {
 			x.printStackTrace();

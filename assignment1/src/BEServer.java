@@ -24,6 +24,7 @@ public class BEServer {
 		public int pport;
         public int mport;
         public int ncores;
+        public int numConnections;
 	}
 
     public static BEPasswordHandler passwordHandler;
@@ -37,7 +38,8 @@ public class BEServer {
 	public static int mport;
 	public static int ncores;
 	public static ArrayList<FEServer.FESeed> seedList;
-	
+    public static PerfCounter perfManager = new PerfCounter();
+
     public static void main(String[] args) {
 		
 		try{
@@ -47,10 +49,10 @@ public class BEServer {
 	    }
 
         try {
-            passwordHandler = new BEPasswordHandler();
+            passwordHandler = new BEPasswordHandler(perfManager);
             passwordProcessor = new BEPassword.Processor(passwordHandler);
 
-            managementHandler = new BEManagementHandler();
+            managementHandler = new BEManagementHandler(perfManager);
             managementProcessor = new BEManagement.Processor(managementHandler);
             
             Runnable passwordPort = new Runnable() {
@@ -67,7 +69,10 @@ public class BEServer {
 
             new Thread(passwordPort).start();
             new Thread(managementPort).start();
-        
+
+            // Record time of when the service is started
+            perfManager.numSecondsUp = System.currentTimeMillis();
+
         } catch (Exception x) {
             x.printStackTrace();
         }
