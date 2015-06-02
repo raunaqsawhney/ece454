@@ -29,8 +29,10 @@ public class Client {
 
             TProtocol protocol = new TBinaryProtocol(transport);
             FEPassword.Client client = new FEPassword.Client(protocol);
+            FEManagement.Client client_man = new FEManagement.Client(protocol);
 
             perform(client);
+            perform_man(client_man);
 
             transport.close();
         } catch (TException x) {
@@ -49,11 +51,13 @@ public class Client {
         checkPassword = client.checkPassword("ThisIsNotThePassword", passwordHash);
         System.out.println("[Client] Check Password (Should Fail) =" + checkPassword);
 
+    }
+
+    private static void perform(FEManagement.Client client_man) throws TException {
         PerfCounters perfCounter = new PerfCounters();
         perfCounters = client.getPerfCounters();
 
         System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
-
 
     }
 }

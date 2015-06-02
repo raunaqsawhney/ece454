@@ -55,7 +55,7 @@ public class BEServer {
             passwordHandler = new BEPasswordHandler(perfManager);
             passwordProcessor = new BEPassword.Processor(passwordHandler);
 
-            managementHandler = new BEManagementHandler(perfManager);
+            managementHandler = new BEManagementHandler(perfManager, serviceUpTime);
             managementProcessor = new BEManagement.Processor(managementHandler);
             
             Runnable passwordPort = new Runnable() {
