@@ -49,13 +49,12 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 
 		for (int i = 0; i < beList.size(); i++) {
-			if (randomBENodeIndex < beList.get(i).ncores) {
-
-				// Returns index of BEServer in BEList to use for request
-				return i;
-			}
+			// Returns index of BEServer in BEList to use for request
+			if (randomBENodeIndex < beList.get(i).ncores) return i;
 			randomBENodeIndex -= beList.get(i).ncores;
 		}
+
+		return -1;
 	}
 
     public String hashPassword(String password, short logRounds) {
