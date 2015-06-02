@@ -83,11 +83,12 @@
         </exec>
     </target>
 
-    <target name="Client" description="Run a ece454750s15a1 client" depends="compile">
-        <echo>ece454750s15a1 client simple:</echo>
-        <java classname="Client"
-              classpathref="ece454750s15a1.classpath" failonerror="true">
-            <arg line="simple"/>
+
+    <target name="FEServer" description="Run FEServer" depends="compile">
+        <echo>[ece454750s15a1] FEServer</echo>
+        <java classname="FEServer" fork="true"
+              classpathref="ece454750s15a1.classpath" failonerror="false">
+            <arg line="-host eceubuntu -pport 21357 -mport 23975 -ncores 2 -seeds eceubuntu:23975"/>
         </java>
     </target>
 
@@ -95,15 +96,15 @@
         <echo>[ece454750s15a1] BEServer</echo>
         <java classname="BEServer" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host localhost -pport 51357 -mport 53975 -ncores 2 -seeds localhost:23975"/>
+            <arg line="-host localhost -pport 51357 -mport 53975 -ncores 2 -seeds eceubuntu:23975"/>
         </java>
     </target>
 
-    <target name="FEServer" description="Run FEServer" depends="compile">
-        <echo>[ece454750s15a1] FEServer</echo>
-        <java classname="FEServer" fork="true"
-              classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host eceubuntu -pport 21357 -mport 23975 -ncores 2 -seeds eceubuntu:23975"/>
+    <target name="Client" description="Run a ece454750s15a1 client" depends="compile">
+        <echo>[ece454750s15a1] Client</echo>
+        <java classname="Client"
+              classpathref="ece454750s15a1.classpath" failonerror="true">
+            <arg line="eceubuntu 21357"/>
         </java>
     </target>
 
