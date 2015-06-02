@@ -141,6 +141,39 @@
 		</parallel>
     </target>
 
+    <target name="step3" description="Run step3" depends="compile">
+        <parallel>
+            <echo>[ece454750s15a1] FESeed</echo>
+            <java classname="FEServer" fork="true"
+                  classpathref="ece454750s15a1.classpath" failonerror="false">
+                <arg line="-host eceubuntu -pport 8887 -mport 8888 -ncores 2 -seeds eceubuntu:8888"/>
+            </java>
+
+            <echo>[ece454750s15a1] BEServer</echo>
+            <sleep seconds="2"/>
+            <java classname="BEServer" fork="true"
+                  classpathref="ece454750s15a1.classpath" failonerror="true">
+                <arg line="-host eceubuntu -pport 11357 -mport 13975 -ncores 2 -seeds eceubuntu:8888"/>
+            </java>
+
+            <echo>[ece454750s15a1] FEServer</echo>
+            <sleep seconds="2" />
+            <java classname="FEServer" fork="true"
+                  classpathref="ece454750s15a1.classpath" failonerror="false">
+                <arg line="-host eceubuntu -pport 21357 -mport 213975 -ncores 2 -seeds eceubuntu:8888"/>
+            </java>
+
+            <sequential>
+                <echo>[ece454750s15a1] A1Client</echo>
+                <sleep seconds="2"/>
+                <java classname="Client"
+                      classpathref="ece454750s15a1.classpath" failonerror="true">
+                    <arg line="eceubuntu 21357"/>
+                </java>
+            </sequential>
+        </parallel>
+    </target>
+
 
     <target name="clean">
         <delete dir="${build}" />
