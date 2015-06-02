@@ -9,7 +9,7 @@ public class BEPasswordHandler implements BEPassword.Iface {
     public String hashPassword(String password, short logRounds) {
 
         // Default log_rounds = 10
-        System.out.println("[BEPasswordHandler] Password to HASH=" + hashed);
+        System.out.println("[BEPasswordHandler] Password to HASH=" + password);
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt(logRounds));
         System.out.println("[BEPasswordHandler] Hashed Password=" + hashed);
 
