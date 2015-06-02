@@ -44,6 +44,9 @@ public class FEPasswordHandler implements FEPassword.Iface {
     } catch (TException x) {
             x.printStackTrace();
     }
+
+		System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
+
 		// Receive hashed password from BENode and return to client
         return hashedPassword;
     }
@@ -66,6 +69,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 				BEPassword.Client client = new BEPassword.Client(protocol);
 
 				result = client.checkPassword(password, hash);
+				System.out.println("[FEPasswordHandler] checkPassword RESULT= " + result);
 
 				transport.close();
 		} catch (TException x) {

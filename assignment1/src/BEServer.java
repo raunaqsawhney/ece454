@@ -79,7 +79,7 @@ public class BEServer {
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(passwordProcessor));
 
-            System.out.println("[BEServer] Starting FE Password service on mport= " + pport);
+            System.out.println("[BEServer] Starting BE Password service on mport= " + pport);
 
             server.serve();
         } catch (Exception e) {
@@ -93,7 +93,7 @@ public class BEServer {
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(managementProcessor));
 
-            System.out.println("[BEServer] Starting FE Management service on mport= " + pport);
+            System.out.println("[BEServer] Starting BE Management service on mport= " + pport);
 
             server.serve();
         } catch (Exception e) {
@@ -156,7 +156,7 @@ public class BEServer {
 			while (i < seedList.size())
 			{
                 System.out.println("[BEServer] seedList.get(" + i + ").host = " + seedList.get(i).host
-                        + "seedList.get(" + i + ").mport = " + seedList.get(i).mport);
+                        + " seedList.get(" + i + ").mport = " + seedList.get(i).mport);
 
                 TTransport transport;
                 transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
@@ -168,7 +168,7 @@ public class BEServer {
                 System.out.println("[BEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
 
                 client.joinCluster(host, pport, mport, ncores);
-                System.out.println("Joined Cluster");
+                System.out.println("[BEServer] Joined Cluster");
 
                 transport.close();
                 i++;
