@@ -7,11 +7,21 @@ import ece454750s15a1.*;
 
 public class BEManagementHandler implements BEManagement.Iface {
 
+    private PerfCounter perfManager = null;
+    private PerfCounter perfManager = new PerfCounter();
+
+
+    public BEManagementHandler(PerfCounter perfManager) {
+        this.perfManager = perfManager;
+    }
+
     public PerfCounters getPerfCounters() {
 
-        PerfCounters testPerfCounters = new PerfCounters();
+        perfCounter.numSecondsUp = System.currentTimeMillis() - perfManager.numSecondsUp;
+        perfCounter.numRequestsReceived = perfManager.numRequestsReceived;
+        perfCounter.numRequestsCompleted = perfManager.numRequestsCompleted;
 
-        return testPerfCounters;
+        return perfCounter;
 
     }
 

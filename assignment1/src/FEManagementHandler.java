@@ -1,4 +1,6 @@
 import org.apache.thrift.TException;
+
+import java.lang.System;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -7,19 +9,26 @@ import ece454750s15a1.*;
 
 public class FEManagementHandler implements FEManagement.Iface {
 
-	private ArrayList<FEServer.FESeed> seedList;
     private CopyOnWriteArrayList<BEServer.BENode> beList = null;
-    
-    public FEManagementHandler(ArrayList<FEServer.FESeed> seedList, CopyOnWriteArrayList<BEServer.BENode> beList) {
-        this.seedList = seedList;
-		this.beList = beList;
+    private PerfCounter perfManager = null;
+    private PerfCounter perfManager = new PerfCounter();
+
+
+    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounter perfManager) {
+        this.beList = beList;
+        this.perfManager = perfManager;
     }
 
     public PerfCounters getPerfCounters() {
 
-        PerfCounters testPerfCounters = new PerfCounters();
+        perfCounter.numSecondsUp = System.currentTimeMillis() - perfManager.numSecondsUp;
+        perfCounter.numRequestsReceived = perfManager.numRequestsReceived;
+        perfCounter.numRequestsCompleted = perfManager.numRequestsCompleted;
 
-        return testPerfCounters;
+
+        System.out.println("[FEManagementHandler] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
+
+        return perfCounter;
 
     }
 
