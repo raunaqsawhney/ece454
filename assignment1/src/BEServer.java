@@ -37,7 +37,10 @@ public class BEServer {
 	public static int pport;
 	public static int mport;
 	public static int ncores;
-	public static ArrayList<FEServer.FESeed> seedList;
+
+    public static Long serviceUpTime;
+
+    public static ArrayList<FEServer.FESeed> seedList;
     public static PerfCounters perfManager = new PerfCounters();
 
     public static void main(String[] args) {
@@ -71,7 +74,7 @@ public class BEServer {
             new Thread(managementPort).start();
 
             // Record time of when the service is started
-            perfManager.numSecondsUp = System.currentTimeMillis();
+            serviceUpTime = System.currentTimeMillis();
 
         } catch (Exception x) {
             x.printStackTrace();

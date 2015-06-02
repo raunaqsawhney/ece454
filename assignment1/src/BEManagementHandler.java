@@ -9,15 +9,16 @@ public class BEManagementHandler implements BEManagement.Iface {
 
     private PerfCounters perfManager = null;
     private PerfCounters perfCounter = new PerfCounters();
+    private Long serviceUpTime;
 
 
-    public BEManagementHandler(PerfCounters perfManager) {
+    public BEManagementHandler(PerfCounters perfManager, serviceUpTime) {
         this.perfManager = perfManager;
     }
 
     public PerfCounters getPerfCounters() {
 
-        perfCounter.numSecondsUp = (int)(System.currentTimeMillis() - perfManager.numSecondsUp);
+        perfCounter.numSecondsUp = (System.currentTimeMillis() - serviceUpTime);
         perfCounter.numRequestsReceived = perfManager.numRequestsReceived;
         perfCounter.numRequestsCompleted = perfManager.numRequestsCompleted;
 

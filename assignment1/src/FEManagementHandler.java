@@ -12,16 +12,17 @@ public class FEManagementHandler implements FEManagement.Iface {
     private CopyOnWriteArrayList<BEServer.BENode> beList = null;
     private PerfCounters perfManager = null;
     private PerfCounters perfCounter = new PerfCounters();
+    private Long serviceUpTime;
 
 
-    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounters perfManager) {
+    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounters perfManager, serviceUpTime) {
         this.beList = beList;
         this.perfManager = perfManager;
     }
 
     public PerfCounters getPerfCounters() {
 
-        perfCounter.numSecondsUp = (int)(System.currentTimeMillis() - perfManager.numSecondsUp);
+        perfCounter.numSecondsUp = System.currentTimeMillis() - serviceUpTime;
         perfCounter.numRequestsReceived = perfManager.numRequestsReceived;
         perfCounter.numRequestsCompleted = perfManager.numRequestsCompleted;
 

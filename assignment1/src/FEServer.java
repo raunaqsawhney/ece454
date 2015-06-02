@@ -35,6 +35,8 @@ public class FEServer {
 
 
     public static ArrayList<FEServer.FESeed> seedList;
+	public static Long serviceUpTime;
+
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	
@@ -77,7 +79,7 @@ public class FEServer {
 			new Thread(managementPort).start();
 
 			// Record time of when the service is started
-			perfManager.numSecondsUp = System.currentTimeMillis();
+			serviceUpTime = System.currentTimeMillis();
 
 		} catch (Exception x) {
 			x.printStackTrace();
