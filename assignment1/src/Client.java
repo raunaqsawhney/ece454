@@ -3,6 +3,7 @@ import ece454750s15a1.*;
 import org.apache.thrift.TException;
 import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -23,8 +24,9 @@ public class Client {
 		}
 
         try {
-            TTransport transport;
-            transport = new TSocket(host, pport);
+            TSocket socket = new TSocket(host, pport);
+			TTransport transport = new TFramedTransport(socket);
+			 
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
@@ -32,7 +34,7 @@ public class Client {
             FEManagement.Client client_man = new FEManagement.Client(protocol);
 
             perform(client);
-            perform_man(client_man);
+            //perform_man(client_man);
 
             transport.close();
         } catch (TException x) {
