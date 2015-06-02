@@ -7,11 +7,11 @@ import ece454750s15a1.*;
 public class BEPasswordHandler implements BEPassword.Iface {
 
     public String hashPassword(String password, short logRounds) {
-        System.out.println("BCrypt.hashpw(" + password + "," + logRounds + ")");
+        System.out.println("[BEPasswordHandler] BCrypt.hashpw(" + password + "," + logRounds + ")");
 
         // Default log_rounds = 10
         String hashed = BCrypt.hashpw(password, BCrypt.gensalt(logRounds));
-        System.out.println("Hashed Password=" + hashed);
+        System.out.println("[BEPasswordHandler] Hashed Password=" + hashed);
 
         return hashed;
     }
@@ -21,10 +21,10 @@ public class BEPasswordHandler implements BEPassword.Iface {
 
         boolean result = false;
         if (BCrypt.checkpw(password, hash)){
-            System.out.println("Password Matches.");
+            System.out.println("[BEPasswordHandler] Password Matches.");
             result = true;
         } else {
-            System.out.println("Password does not match");
+            System.out.println("[BEPasswordHandler] Password does not match");
             result = false;
         }
         return result;
