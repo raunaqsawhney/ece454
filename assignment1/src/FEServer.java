@@ -75,9 +75,9 @@ public class FEServer {
 
 				new Thread(passwordPort).start();
 				new Thread(managementPort).start();
-			}catch(Exception x){
-				x.printStackTrace();
 			}
+		} catch (Exception x) {
+			x.printStackTrace();
 		}
     }
 
