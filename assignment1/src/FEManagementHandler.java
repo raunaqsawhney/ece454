@@ -10,8 +10,8 @@ import ece454750s15a1.*;
 public class FEManagementHandler implements FEManagement.Iface {
 
     private CopyOnWriteArrayList<BEServer.BENode> beList = null;
-    private PerfCounter perfManager = null;
-    private PerfCounter perfManager = new PerfCounter();
+    private PerfCounters perfManager = null;
+    private PerfCounters perfManager = new PerfCounter();
 
 
     public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounter perfManager) {

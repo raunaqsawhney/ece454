@@ -19,7 +19,7 @@ import ece454750s15a1.*;
 public class FEPasswordHandler implements FEPassword.Iface {
 
 	private CopyOnWriteArrayList<BEServer.BENode> beList = null;
-	private PerfCounter perfCounter = new PerfCounter();
+	private PerfCounters perfCounter = new PerfCounter();
 
 	public FEPasswordHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounter perfCounter) {
 		this.beList = beList;
