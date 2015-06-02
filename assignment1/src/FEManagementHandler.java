@@ -11,10 +11,10 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     private CopyOnWriteArrayList<BEServer.BENode> beList = null;
     private PerfCounters perfManager = null;
-    private PerfCounters perfManager = new PerfCounter();
+    private PerfCounters perfCounter = new PerfCounters();
 
 
-    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounter perfManager) {
+    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, PerfCounters perfManager) {
         this.beList = beList;
         this.perfManager = perfManager;
     }

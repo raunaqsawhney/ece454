@@ -8,7 +8,7 @@ import ece454750s15a1.*;
 public class BEManagementHandler implements BEManagement.Iface {
 
     private PerfCounters perfManager = null;
-    private PerfCounters perfManager = new PerfCounter();
+    private PerfCounters perfManager = new ();
 
 
     public BEManagementHandler(PerfCounter perfManager) {
