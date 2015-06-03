@@ -70,9 +70,6 @@ public class FEServer {
             managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
 			managementProcessor = new FEManagement.Processor(managementHandler);
 
-			feSyncHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-			feSyncProcessor = new FEManagement.Processor(feSyncHandler);
-
 			// Create service runnables
             Runnable passwordPort = new Runnable() {
                 public void run() {
@@ -80,22 +77,22 @@ public class FEServer {
 				}
 			};
 
-			Runnable managementPort = new Runnable() {
+			final Runnable managementPort = new Runnable() {
 				public void run() {
 					managementPort(managementProcessor);
 				}
 			};
 
-			final Runnable feSyncPort = new Runnable() {
+			final Runnable feSyncList = new Runnable() {
 				public void run() {
-					feSyncPort(feSyncProcessor);
+					feSyncList();
 				}
 			}
 
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
-			new Thread(feSyncPort).start();
+			new Thread(feSyncList).start();
 
 //			if (!isFESeed()) {
 //				System.out.println("[FEServer] Starting FE Sync...");
@@ -253,9 +250,9 @@ public class FEServer {
         }
     }
 
-	public static  void feSyncPort(FEManagement.Processor feSyncProcessor) {
-
-
+	public static  void feSyncList() {
+		Timer timer = new Timer();
+		timer.schedule(new syncList(), 0, 100);
 	}
 
 }
