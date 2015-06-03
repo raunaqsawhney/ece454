@@ -51,7 +51,6 @@ public class FEServer {
 	public static int mport;
 	public static int ncores;
 
-
 	public static Long serviceUpTime;
 
 	public static PerfCounters perfManager = new PerfCounters();
@@ -176,8 +175,8 @@ public class FEServer {
 			for (FEServer.FESeed seed : seedList){
 				System.out.println(seed.host + " " + seed.mport);
 			}
-
-			int i = 0;
+/*
+		    int i = 0;
 			while (i < seedList.size())
 			{
 				System.out.println("[FEServer] seedList.get(" + i + ").host = " + seedList.get(i).host
@@ -188,7 +187,7 @@ public class FEServer {
 				transport.open();
 
 				TProtocol protocol = new TBinaryProtocol(transport);
-				FEManagement.Client client = new FEManagement.Client(protocol);
+		        FEManagement.Client	client = new FEManagement.Client(protocol);
 
 				System.out.println("[FEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
 
@@ -199,7 +198,7 @@ public class FEServer {
 				transport.close();
 				i++;
 			}
-
+*/
 		} catch(Exception x){
 			x.printStackTrace();
 		}
@@ -256,9 +255,38 @@ public class FEServer {
     }
 
 	public static  void feSyncList() {
-	    
-        System.out.println("[FEServer] Time = " + System.currentTimeMillis());
-    
-    }
+	  
 
+        try {
+            
+            System.out.println("[FEServer] Time = " + System.currentTimeMillis());
+            System.out.println("[FEServer] Syncing FEServer host = " + host + " pport =  " + pport + " mport = " + mport + " ncores = " + ncores);
+
+            Random randGen = new Random();
+            int randomSeedIndex = randGen.nextInt(seedList.size());
+
+            TTransport transport;
+            transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
+            transport.open();
+
+            TProtocol protocol = new TBinaryProtocol(transport);
+            FEManagement.Client client = new FEManagement.Client(protocol);
+
+            List<String> beSyncList = client.getBEList();
+            List<String> feSyncList = client.getFEList();
+       
+             for (String beSyncListItem : beSyncList) {
+                System.out.println("[FEServer] beSyncList BENode " + beSyncListItem);
+            }   
+
+
+            for (String feSyncListItem : feSyncList) {
+                System.out.println("[FEServer] feSyncList FENode " + feSyncListItem);
+            }
+
+            transport.close();
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
+    }
 }

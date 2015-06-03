@@ -82,7 +82,6 @@ public class FEManagementHandler implements FEManagement.Iface {
 
         System.out.println("[FEManagementHandler] BEList (getBEList)");
         for (BEServer.BENode beListItem : beList) {
-            System.out.println("-host " + beListItem.host + " -pport  " + beListItem.pport + " -mport " + beListItem.mport + " -ncores " + beListItem.ncores);
             stringBEList.add("-host " + beListItem.host + " -pport  " + beListItem.pport + " -mport " + beListItem.mport + " -ncores " + beListItem.ncores);
         }
 
@@ -95,7 +94,6 @@ public class FEManagementHandler implements FEManagement.Iface {
 
         System.out.println("[FEManagementHandler] FEList (getFEList)");
         for (FEServer.FENode feListItem : feList) {
-            System.out.println("-host " + feListItem.host + " -pport  " + feListItem.pport + " -mport " + feListItem.mport + " -ncores " + feListItem.ncores);
             stringFEList.add("-host " + feListItem.host + " -pport  " + feListItem.pport + " -mport " + feListItem.mport + " -ncores " + feListItem.ncores);
         }
 
