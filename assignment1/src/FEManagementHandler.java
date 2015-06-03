@@ -16,8 +16,7 @@ public class FEManagementHandler implements FEManagement.Iface {
     private PerfCounters perfCounter = new PerfCounters();
     private Long serviceUpTime;
 
-    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, CopyOnWriteArrayList<FEServer.FENode> feList,
-                               PerfCounters perfManager, Long serviceUpTime) {
+    public FEManagementHandler(CopyOnWriteArrayList<BEServer.BENode> beList, CopyOnWriteArrayList<FEServer.FENode> feList, PerfCounters perfManager, Long serviceUpTime) {
         this.beList = beList;
         this.feList = feList;
 
@@ -53,10 +52,10 @@ public class FEManagementHandler implements FEManagement.Iface {
            // This is an FE Node trying to join the cluster
 
            FEServer.FENode feNode = new FEServer.FENode();
-           beNode.host = host;
-           beNode.pport = pport;
-           beNode.mport = mport;
-           beNode.ncores = ncores;
+           feNode.host = host;
+           feNode.pport = pport;
+           feNode.mport = mport;
+           feNode.ncores = ncores;
 
            feList.add(feNode);
            System.out.println("[FEManagementHandler] Added FE to cluster");

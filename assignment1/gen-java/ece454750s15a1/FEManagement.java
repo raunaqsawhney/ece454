@@ -40,7 +40,7 @@ public class FEManagement {
 
     public List<String> getGroupMembers() throws org.apache.thrift.TException;
 
-    public void joinCluster(String host, int pport, int mport, int ncores) throws org.apache.thrift.TException;
+    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException;
 
   }
 
@@ -50,7 +50,7 @@ public class FEManagement {
 
     public void getGroupMembers(org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
-    public void joinCluster(String host, int pport, int mport, int ncores, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
+    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException;
 
   }
 
@@ -118,19 +118,20 @@ public class FEManagement {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getGroupMembers failed: unknown result");
     }
 
-    public void joinCluster(String host, int pport, int mport, int ncores) throws org.apache.thrift.TException
+    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException
     {
-      send_joinCluster(host, pport, mport, ncores);
+      send_joinCluster(host, pport, mport, ncores, nodeType);
       recv_joinCluster();
     }
 
-    public void send_joinCluster(String host, int pport, int mport, int ncores) throws org.apache.thrift.TException
+    public void send_joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException
     {
       joinCluster_args args = new joinCluster_args();
       args.setHost(host);
       args.setPport(pport);
       args.setMport(mport);
       args.setNcores(ncores);
+      args.setNodeType(nodeType);
       sendBase("joinCluster", args);
     }
 
@@ -217,9 +218,9 @@ public class FEManagement {
       }
     }
 
-    public void joinCluster(String host, int pport, int mport, int ncores, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
+    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType, org.apache.thrift.async.AsyncMethodCallback resultHandler) throws org.apache.thrift.TException {
       checkReady();
-      joinCluster_call method_call = new joinCluster_call(host, pport, mport, ncores, resultHandler, this, ___protocolFactory, ___transport);
+      joinCluster_call method_call = new joinCluster_call(host, pport, mport, ncores, nodeType, resultHandler, this, ___protocolFactory, ___transport);
       this.___currentMethod = method_call;
       ___manager.call(method_call);
     }
@@ -229,12 +230,14 @@ public class FEManagement {
       private int pport;
       private int mport;
       private int ncores;
-      public joinCluster_call(String host, int pport, int mport, int ncores, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
+      private int nodeType;
+      public joinCluster_call(String host, int pport, int mport, int ncores, int nodeType, org.apache.thrift.async.AsyncMethodCallback resultHandler, org.apache.thrift.async.TAsyncClient client, org.apache.thrift.protocol.TProtocolFactory protocolFactory, org.apache.thrift.transport.TNonblockingTransport transport) throws org.apache.thrift.TException {
         super(client, protocolFactory, transport, resultHandler, false);
         this.host = host;
         this.pport = pport;
         this.mport = mport;
         this.ncores = ncores;
+        this.nodeType = nodeType;
       }
 
       public void write_args(org.apache.thrift.protocol.TProtocol prot) throws org.apache.thrift.TException {
@@ -244,6 +247,7 @@ public class FEManagement {
         args.setPport(pport);
         args.setMport(mport);
         args.setNcores(ncores);
+        args.setNodeType(nodeType);
         args.write(prot);
         prot.writeMessageEnd();
       }
@@ -332,7 +336,7 @@ public class FEManagement {
 
       public joinCluster_result getResult(I iface, joinCluster_args args) throws org.apache.thrift.TException {
         joinCluster_result result = new joinCluster_result();
-        iface.joinCluster(args.host, args.pport, args.mport, args.ncores);
+        iface.joinCluster(args.host, args.pport, args.mport, args.ncores, args.nodeType);
         return result;
       }
     }
@@ -504,7 +508,7 @@ public class FEManagement {
       }
 
       public void start(I iface, joinCluster_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
-        iface.joinCluster(args.host, args.pport, args.mport, args.ncores,resultHandler);
+        iface.joinCluster(args.host, args.pport, args.mport, args.ncores, args.nodeType,resultHandler);
       }
     }
 
@@ -1771,6 +1775,7 @@ public class FEManagement {
     private static final org.apache.thrift.protocol.TField PPORT_FIELD_DESC = new org.apache.thrift.protocol.TField("pport", org.apache.thrift.protocol.TType.I32, (short)2);
     private static final org.apache.thrift.protocol.TField MPORT_FIELD_DESC = new org.apache.thrift.protocol.TField("mport", org.apache.thrift.protocol.TType.I32, (short)3);
     private static final org.apache.thrift.protocol.TField NCORES_FIELD_DESC = new org.apache.thrift.protocol.TField("ncores", org.apache.thrift.protocol.TType.I32, (short)4);
+    private static final org.apache.thrift.protocol.TField NODE_TYPE_FIELD_DESC = new org.apache.thrift.protocol.TField("nodeType", org.apache.thrift.protocol.TType.I32, (short)5);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -1782,13 +1787,15 @@ public class FEManagement {
     public int pport; // required
     public int mport; // required
     public int ncores; // required
+    public int nodeType; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       HOST((short)1, "host"),
       PPORT((short)2, "pport"),
       MPORT((short)3, "mport"),
-      NCORES((short)4, "ncores");
+      NCORES((short)4, "ncores"),
+      NODE_TYPE((short)5, "nodeType");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -1811,6 +1818,8 @@ public class FEManagement {
             return MPORT;
           case 4: // NCORES
             return NCORES;
+          case 5: // NODE_TYPE
+            return NODE_TYPE;
           default:
             return null;
         }
@@ -1854,6 +1863,7 @@ public class FEManagement {
     private static final int __PPORT_ISSET_ID = 0;
     private static final int __MPORT_ISSET_ID = 1;
     private static final int __NCORES_ISSET_ID = 2;
+    private static final int __NODETYPE_ISSET_ID = 3;
     private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
@@ -1866,6 +1876,8 @@ public class FEManagement {
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       tmpMap.put(_Fields.NCORES, new org.apache.thrift.meta_data.FieldMetaData("ncores", org.apache.thrift.TFieldRequirementType.DEFAULT, 
           new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
+      tmpMap.put(_Fields.NODE_TYPE, new org.apache.thrift.meta_data.FieldMetaData("nodeType", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.I32)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(joinCluster_args.class, metaDataMap);
     }
@@ -1877,7 +1889,8 @@ public class FEManagement {
       String host,
       int pport,
       int mport,
-      int ncores)
+      int ncores,
+      int nodeType)
     {
       this();
       this.host = host;
@@ -1887,6 +1900,8 @@ public class FEManagement {
       setMportIsSet(true);
       this.ncores = ncores;
       setNcoresIsSet(true);
+      this.nodeType = nodeType;
+      setNodeTypeIsSet(true);
     }
 
     /**
@@ -1900,6 +1915,7 @@ public class FEManagement {
       this.pport = other.pport;
       this.mport = other.mport;
       this.ncores = other.ncores;
+      this.nodeType = other.nodeType;
     }
 
     public joinCluster_args deepCopy() {
@@ -1915,6 +1931,8 @@ public class FEManagement {
       this.mport = 0;
       setNcoresIsSet(false);
       this.ncores = 0;
+      setNodeTypeIsSet(false);
+      this.nodeType = 0;
     }
 
     public String getHost() {
@@ -2010,6 +2028,29 @@ public class FEManagement {
       __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __NCORES_ISSET_ID, value);
     }
 
+    public int getNodeType() {
+      return this.nodeType;
+    }
+
+    public joinCluster_args setNodeType(int nodeType) {
+      this.nodeType = nodeType;
+      setNodeTypeIsSet(true);
+      return this;
+    }
+
+    public void unsetNodeType() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __NODETYPE_ISSET_ID);
+    }
+
+    /** Returns true if field nodeType is set (has been assigned a value) and false otherwise */
+    public boolean isSetNodeType() {
+      return EncodingUtils.testBit(__isset_bitfield, __NODETYPE_ISSET_ID);
+    }
+
+    public void setNodeTypeIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __NODETYPE_ISSET_ID, value);
+    }
+
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
       case HOST:
@@ -2044,6 +2085,14 @@ public class FEManagement {
         }
         break;
 
+      case NODE_TYPE:
+        if (value == null) {
+          unsetNodeType();
+        } else {
+          setNodeType((Integer)value);
+        }
+        break;
+
       }
     }
 
@@ -2060,6 +2109,9 @@ public class FEManagement {
 
       case NCORES:
         return Integer.valueOf(getNcores());
+
+      case NODE_TYPE:
+        return Integer.valueOf(getNodeType());
 
       }
       throw new IllegalStateException();
@@ -2080,6 +2132,8 @@ public class FEManagement {
         return isSetMport();
       case NCORES:
         return isSetNcores();
+      case NODE_TYPE:
+        return isSetNodeType();
       }
       throw new IllegalStateException();
     }
@@ -2130,6 +2184,15 @@ public class FEManagement {
         if (!(this_present_ncores && that_present_ncores))
           return false;
         if (this.ncores != that.ncores)
+          return false;
+      }
+
+      boolean this_present_nodeType = true;
+      boolean that_present_nodeType = true;
+      if (this_present_nodeType || that_present_nodeType) {
+        if (!(this_present_nodeType && that_present_nodeType))
+          return false;
+        if (this.nodeType != that.nodeType)
           return false;
       }
 
@@ -2189,6 +2252,16 @@ public class FEManagement {
           return lastComparison;
         }
       }
+      lastComparison = Boolean.valueOf(isSetNodeType()).compareTo(other.isSetNodeType());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetNodeType()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.nodeType, other.nodeType);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -2227,6 +2300,10 @@ public class FEManagement {
       if (!first) sb.append(", ");
       sb.append("ncores:");
       sb.append(this.ncores);
+      first = false;
+      if (!first) sb.append(", ");
+      sb.append("nodeType:");
+      sb.append(this.nodeType);
       first = false;
       sb.append(")");
       return sb.toString();
@@ -2305,6 +2382,14 @@ public class FEManagement {
                 org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
               }
               break;
+            case 5: // NODE_TYPE
+              if (schemeField.type == org.apache.thrift.protocol.TType.I32) {
+                struct.nodeType = iprot.readI32();
+                struct.setNodeTypeIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -2333,6 +2418,9 @@ public class FEManagement {
         oprot.writeFieldEnd();
         oprot.writeFieldBegin(NCORES_FIELD_DESC);
         oprot.writeI32(struct.ncores);
+        oprot.writeFieldEnd();
+        oprot.writeFieldBegin(NODE_TYPE_FIELD_DESC);
+        oprot.writeI32(struct.nodeType);
         oprot.writeFieldEnd();
         oprot.writeFieldStop();
         oprot.writeStructEnd();
@@ -2364,7 +2452,10 @@ public class FEManagement {
         if (struct.isSetNcores()) {
           optionals.set(3);
         }
-        oprot.writeBitSet(optionals, 4);
+        if (struct.isSetNodeType()) {
+          optionals.set(4);
+        }
+        oprot.writeBitSet(optionals, 5);
         if (struct.isSetHost()) {
           oprot.writeString(struct.host);
         }
@@ -2377,12 +2468,15 @@ public class FEManagement {
         if (struct.isSetNcores()) {
           oprot.writeI32(struct.ncores);
         }
+        if (struct.isSetNodeType()) {
+          oprot.writeI32(struct.nodeType);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, joinCluster_args struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
-        BitSet incoming = iprot.readBitSet(4);
+        BitSet incoming = iprot.readBitSet(5);
         if (incoming.get(0)) {
           struct.host = iprot.readString();
           struct.setHostIsSet(true);
@@ -2398,6 +2492,10 @@ public class FEManagement {
         if (incoming.get(3)) {
           struct.ncores = iprot.readI32();
           struct.setNcoresIsSet(true);
+        }
+        if (incoming.get(4)) {
+          struct.nodeType = iprot.readI32();
+          struct.setNodeTypeIsSet(true);
         }
       }
     }

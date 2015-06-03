@@ -11,6 +11,9 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TServerTransport;
 import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
+import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.protocol.TProtocol;
 
 import java.lang.System;
 import java.util.*;
@@ -53,6 +56,7 @@ public class FEServer {
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	
+	public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
     public static void main(String[] args) {
 
 		try {
