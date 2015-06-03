@@ -47,35 +47,30 @@ public class FEServer {
 	public static int ncores;
 
 
-    public static ArrayList<FEServer.FESeed> seedList;
 	public static Long serviceUpTime;
 
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
-	
-    public static void main(String[] args) {
+	public static ArrayList<FEServer.FESeed> seedList;
+
+	public static void main(String[] args) {
 
 		try {
 
 			// Start parsing the CLI
 			startup(args);
 
-//			boolean isFESeed = false;
-
-//			// Differentiate between FESeed and FEServer
-//			for (FEServer.FESeed feSeed : seedList) {
-//				if (host == feSeed.host && mport == feSeed.mport) {
-//					System.out.println("[FEServer] FE Node with host " + feSeed.host + " and mport " + feSeed.mport
-//						+ " is an FESeed");
-//				}
-//			}
-
+			// Create service thread handlers
 			passwordHandler = new FEPasswordHandler(beList, perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 
             managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
 			managementProcessor = new FEManagement.Processor(managementHandler);
-            
+
+			feSyncHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
+			feSyncProcessor = new FEManagement.Processor(feSyncHandler);
+
+			// Create service runnables
             Runnable passwordPort = new Runnable() {
                 public void run() {
 					passwordPort(passwordProcessor);
@@ -88,8 +83,20 @@ public class FEServer {
 				}
 			};
 
+			final Runnable feSyncPort = new Runnable() {
+				public void run() {
+					feSyncPort(feSyncProcessor);
+				}
+			}
+
+			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
+
+			if (!isFESeed()) {
+				System.out.println("[FEServer] Starting FE Sync...");
+				new Thread(feSyncPort).start();
+			}
 
 			// Record time of when the service is started
 			serviceUpTime = System.currentTimeMillis();
@@ -100,6 +107,19 @@ public class FEServer {
 			x.printStackTrace();
 		}
     }
+
+	public static boolean isFESeed() {
+		boolean isFESeed = false;
+
+		// Differentiate between FESeed and FEServerc
+		for (FEServer.FESeed feSeed : seedList) {
+			if (host == feSeed.host && mport == feSeed.mport) {
+				System.out.println("[FEServer] FE Node with host " + feSeed.host + " and mport " + feSeed.mport + " is an FESeed");
+			}
+		}
+
+		return  isFESeed;
+	}
 
 	public static void startup(String[] args) {
 		try {
@@ -228,5 +248,9 @@ public class FEServer {
             e.printStackTrace();
         }
     }
+
+	public static  void feSyncPort(FEManagement.Processor feSyncProcessor) {
+
+	}
 
 }

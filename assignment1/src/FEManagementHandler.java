@@ -2,6 +2,7 @@ import org.apache.thrift.TException;
 
 import java.lang.System;
 import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 
 //Generated code
@@ -71,4 +72,15 @@ public class FEManagementHandler implements FEManagement.Iface {
            System.out.println("[FEManagementHandler] Added BE to cluster");
        }
    }
+
+    public ArrayList<BEServer.BENode> getBEList() {
+
+        ArrayList<BEServer.BENode> beListToReturn = new ArrayList<BEServer.BENode>();
+
+        for (BEServer.BENode beListItem : beList) {
+            beListToReturn.add(beListItem);
+        }
+
+        return beListToReturn;
+    }
 }
