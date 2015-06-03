@@ -92,11 +92,12 @@ public class FEServer {
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
+			new Thread(feSyncPort).start();
 
-			if (!isFESeed()) {
-				System.out.println("[FEServer] Starting FE Sync...");
-				new Thread(feSyncPort).start();
-			}
+//			if (!isFESeed()) {
+//				System.out.println("[FEServer] Starting FE Sync...");
+//				new Thread(feSyncPort).start();
+//			}
 
 			// Record time of when the service is started
 			serviceUpTime = System.currentTimeMillis();
@@ -250,6 +251,7 @@ public class FEServer {
     }
 
 	public static  void feSyncPort(FEManagement.Processor feSyncProcessor) {
+
 
 	}
 
