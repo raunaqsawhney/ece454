@@ -24,7 +24,6 @@ public class BEServer {
 		public int pport;
         public int mport;
         public int ncores;
-        public int numConnections;
 	}
 
     public static BEPasswordHandler passwordHandler;
@@ -175,7 +174,7 @@ public class BEServer {
 
                 System.out.println("[BEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
 
-                client.joinCluster(host, pport, mport, ncores);
+                client.joinCluster(host, pport, mport, ncores, 1);
                 System.out.println("[BEServer] Joined Cluster");
 
                 transport.close();

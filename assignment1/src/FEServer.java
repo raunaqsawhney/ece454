@@ -27,6 +27,14 @@ public class FEServer {
 		public int mport;
 	}
 
+	public static class FENode {
+
+		public String host;
+		public int pport;
+		public int mport;
+		public int ncores;
+	}
+
 	public static FEPasswordHandler passwordHandler;
     public static FEPassword.Processor passwordProcessor;
 	
@@ -65,7 +73,7 @@ public class FEServer {
 			passwordHandler = new FEPasswordHandler(beList, perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-            managementHandler = new FEManagementHandler(beList, perfManager, serviceUpTime);
+            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
 			managementProcessor = new FEManagement.Processor(managementHandler);
             
             Runnable passwordPort = new Runnable() {
@@ -141,6 +149,29 @@ public class FEServer {
 			System.out.println("Seeds:");
 			for (FEServer.FESeed seed : seedList){
 				System.out.println(seed.host + " " + seed.mport);
+			}
+
+			int i = 0;
+			while (i < seedList.size())
+			{
+				System.out.println("[FEServer] seedList.get(" + i + ").host = " + seedList.get(i).host
+						+ " seedList.get(" + i + ").mport = " + seedList.get(i).mport);
+
+				TTransport transport;
+				transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
+				transport.open();
+
+				TProtocol protocol = new TBinaryProtocol(transport);
+				FEManagement.Client client = new FEManagement.Client(protocol);
+
+				System.out.println("[FEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
+
+				// joinCluster: last argument is node type, 0 = FE, 1 = BE
+				client.joinCluster(host, pport, mport, ncores, 0);
+				System.out.println("[FEServer] Joined Cluster");
+
+				transport.close();
+				i++;
 			}
 
 		} catch(Exception x){
