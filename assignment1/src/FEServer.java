@@ -256,7 +256,6 @@ public class FEServer {
 
 	public static  void feSyncList() {
 	  
-
         try {
             
             System.out.println("[FEServer] Time = " + System.currentTimeMillis());
@@ -274,11 +273,15 @@ public class FEServer {
 
             List<String> beSyncList = client.getBEList();
             List<String> feSyncList = client.getFEList();
-       
-             for (String beSyncListItem : beSyncList) {
+    
+            ArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
+            ArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
+
+
+
+            for (String beSyncListItem : beSyncList) {
                 System.out.println("[FEServer] beSyncList BENode " + beSyncListItem);
             }   
-
 
             for (String feSyncListItem : feSyncList) {
                 System.out.println("[FEServer] feSyncList FENode " + feSyncListItem);
@@ -289,30 +292,6 @@ public class FEServer {
             x.printStackTrace();
         }
     }
-	
-    public static ArrayList<String> feListEncoder(CopyOnWriteArrayList<FEServer.FENode> list) {
-		CopyOnWriteArrayList<FEServer.FENode> tempList = list;
-		ArrayList<String> stringList = new ArrayList<String>();
-		
-		for (FEServer.FENode n : tempList){
-			String entry = n.host + "," + n.pport + "," + n.mport + "," + n.ncores;
-			stringList.add(entry);
-		}
-		
-		return stringList;
-	}
-	
-	public static ArrayList<String> beListEncoder(CopyOnWriteArrayList<BEServer.BENode> list) {
-		CopyOnWriteArrayList<BEServer.BENode> tempList = list;
-		ArrayList<String> stringList = new ArrayList<String>();
-		
-		for (BEServer.BENode n : tempList){
-			String entry = n.host + "," + n.pport + "," + n.mport + "," + n.ncores;
-			stringList.add(entry);
-		}
-		
-		return stringList;
-	}
 	
 	public static ArrayList<FEServer.FENode> feListDecoder(List<String> list) {
 		ArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
@@ -349,5 +328,4 @@ public class FEServer {
 		
 		return tempList;
 	}
->>>>>>> 414de531dc68efbf830a3278bcdf1f23fc94ccda
 }
