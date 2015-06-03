@@ -261,4 +261,55 @@ public class FEServer {
     
     }
 
+	public static ArrayList<String> feListEncoder(CopyOnWriteArrayList<FEServer.FENode> list) {
+		CopyOnWriteArrayList<FEServer.FENode> tempList = list;
+		ArrayList<String> stringList = new ArrayList<String>();
+		
+		for (FEServer.FENode n : tempList){
+			String entry = n.host + "," + n.pport + "," + n.mport + "," + n.ncores;
+			stringList.add(entry);
+		}
+		
+		return stringList;
+	}
+	
+	public static ArrayList<String> beListEncoder(CopyOnWriteArrayList<BEServer.BENode> list) {
+		CopyOnWriteArrayList<BEServer.BENode> tempList = list;
+		ArrayList<String> stringList = new ArrayList<String>();
+		
+		for (BEServer.BENode n : tempList){
+			String entry = n.host + "," + n.pport + "," + n.mport + "," + n.ncores;
+			stringList.add(entry);
+		}
+		
+		return stringList;
+	}
+	
+	public static ArrayList<FEServer.FENode> feListDecoder(List<String> list) {
+		ArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
+		ArrayList<String> stringList = new ArrayList<String>(list);
+		
+		for (String n : stringList){
+			String[] entryString = n.split(",");
+			FEServer.FENode entry = new FEServer.FENode();
+			entry.host = entryString[0];
+			entry.pport = Integer.parseInt(entryString[1]);
+			entry.mport = Integer.parseInt(entryString[2]);
+			entry.ncores = Integer.parseInt(entryString[3]);
+		}
+	}
+	
+	public static ArrayList<BEServer.BENode> beListDecoder(List<String> list) {
+		ArrayList<BEServer.BENode> tempList = new ArrayList<BEServer.BENode>();
+		ArrayList<String> stringList = new ArrayList<String>(list);
+		
+		for (String n : stringList){
+			String[] entryString = n.split(",");
+			BEServer.BENode entry = new BEServer.BENode();
+			entry.host = entryString[0];
+			entry.pport = Integer.parseInt(entryString[1]);
+			entry.mport = Integer.parseInt(entryString[2]);
+			entry.ncores = Integer.parseInt(entryString[3]);
+		}
+	}
 }
