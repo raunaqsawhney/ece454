@@ -296,7 +296,11 @@ public class FEServer {
 			entry.pport = Integer.parseInt(entryString[1]);
 			entry.mport = Integer.parseInt(entryString[2]);
 			entry.ncores = Integer.parseInt(entryString[3]);
+			
+			tempList.add(entry);
 		}
+		
+		return tempList;
 	}
 	
 	public static ArrayList<BEServer.BENode> beListDecoder(List<String> list) {
@@ -310,6 +314,10 @@ public class FEServer {
 			entry.pport = Integer.parseInt(entryString[1]);
 			entry.mport = Integer.parseInt(entryString[2]);
 			entry.ncores = Integer.parseInt(entryString[3]);
+			
+			tempList.add(entry);
 		}
+		
+		return tempList;
 	}
 }
