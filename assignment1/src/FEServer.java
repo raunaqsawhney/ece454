@@ -36,7 +36,9 @@ public class FEServer {
 		public int pport;
 		public int mport;
 		public int ncores;
-	}
+    }
+
+    public static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
 	public static FEPasswordHandler passwordHandler;
     public static FEPassword.Processor passwordProcessor;
@@ -87,12 +89,12 @@ public class FEServer {
 				public void run() {
 					feSyncList();
 				}
-			}
+			};
 
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
-			new Thread(feSyncList).start();
+//			new Thread(feSyncList).start();
 
 //			if (!isFESeed()) {
 //				System.out.println("[FEServer] Starting FE Sync...");
@@ -100,7 +102,10 @@ public class FEServer {
 //			}
 
 			// Record time of when the service is started
-			serviceUpTime = System.currentTimeMillis();
+
+            executor.scheduleAtFixedRate(feSyncList, 0, 100, TimeUnit.MILLISECONDS);
+            
+            serviceUpTime = System.currentTimeMillis();
 
 		//	openPasswordPort();
 
@@ -251,8 +256,9 @@ public class FEServer {
     }
 
 	public static  void feSyncList() {
-		Timer timer = new Timer();
-		timer.schedule(new syncList(), 0, 100);
-	}
+	    
+        System.out.println("[FEServer] Time = " + System.currentTimeMillis());
+    
+    }
 
 }

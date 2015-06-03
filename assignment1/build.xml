@@ -93,7 +93,7 @@
     <target name="BEServer1" description="Running BEServer 2" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 11175 -mport 21175 -ncores 2 -seeds eceubuntu:23975"/>
+            <arg line="-host eceubuntu -pport 11175 -mport 21175 -ncores 2 -seeds eceubuntu:11903"/>
         </java>
     </target>
 
@@ -101,7 +101,7 @@
     <target name="BEServer2" description="Running BEServer 2" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 11903 -mport 21903 -ncores 100 -seeds eceubuntu:23975"/>
+            <arg line="-host eceubuntu -pport 31175 -mport 41175 -ncores 100 -seeds eceubuntu:11903"/>
         </java>
     </target>
 
@@ -109,7 +109,7 @@
     <target name="BEServer3" description="Running BEServer 3" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 31903 -mport 41903 -ncores 1 -seeds eceubuntu:23975"/>
+            <arg line="-host eceubuntu -pport 31903 -mport 41903 -ncores 1 -seeds eceubuntu:11903"/>
         </java>
     </target>
 
@@ -117,20 +117,20 @@
         <parallel>
             <java classname="Client" fork="true"
                 classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 21357"/>
+                <arg line="eceubuntu 21903"/>
             </java>
             <java classname="Client" fork="true"
                  classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 21357"/>
+                <arg line="eceubuntu 21903"/>
             </java>
             
             <java classname="Client" fork="true"
                 classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 21357"/>
+                <arg line="eceubuntu 21903"/>
             </java>
             <java classname="Client" fork="true"
                  classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 21357"/>
+                <arg line="eceubuntu 21903"/>
             </java>
         
         </parallel>    
@@ -140,7 +140,7 @@
         <echo>[ece454750s15a1] FESeed</echo>
         <java classname="FEServer" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host eceubuntu -pport 21357 -mport 23975 -ncores 6 -seeds eceubuntu:23975"/>
+            <arg line="-host localhost -pport 21903 -mport 11903 -ncores 6 -seeds localhost:11903"/>
         </java>
     </target>
 	
