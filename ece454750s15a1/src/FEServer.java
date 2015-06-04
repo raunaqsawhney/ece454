@@ -273,9 +273,9 @@ public class FEServer {
 
             List<String> beSyncList = client.getBEList();
             List<String> feSyncList = client.getFEList();
-    
-            ArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
-            ArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
+
+            CopyOnWriteArrayListArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
+            CopyOnWriteArrayListArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
 
             for (FEServer.FENode feNode : feSyncArrayList) {
                 if (!feList.contains(feNode)) {
@@ -328,8 +328,8 @@ public class FEServer {
 		}
 	}
 	
-	public static ArrayList<FEServer.FENode> feListDecoder(List<String> list) {
-		ArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
+	public static CopyOnWriteArrayListArrayList<FEServer.FENode> feListDecoder(List<String> list) {
+        CopyOnWriteArrayListArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
@@ -345,8 +345,8 @@ public class FEServer {
 		return tempList;
 	}
 	
-	public static ArrayList<BEServer.BENode> beListDecoder(List<String> list) {
-		ArrayList<BEServer.BENode> tempList = new ArrayList<BEServer.BENode>();
+	public static CopyOnWriteArrayListArrayList<BEServer.BENode> beListDecoder(List<String> list) {
+        CopyOnWriteArrayListArrayList<BEServer.BENode> tempList = new ArrayList<BEServer.BENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
