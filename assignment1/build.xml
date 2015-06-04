@@ -86,14 +86,14 @@
     <target name="FEServer" description="Running FEServer" depends="compile">
         <java classname ="FEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host eceubuntu -pport 51357 -mport 53975 -ncores 2 -seeds eceubuntu:33975"/>
+            <arg line="-host eceubuntu -pport 31357 -mport 33975 -ncores 1 -seeds eceubuntu:13975,eceubuntu:23975"/>
         </java>
     </target>
 
     <target name="BEServer1" description="Running BEServer 2" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 21903 -mport 21175 -ncores 1 -seeds eceubuntu:33975"/>
+            <arg line="-host eceubuntu -pport 11903 -mport 11175 -ncores 1 -seeds eceubuntu:13975,eceubuntu:23975"/>
         </java>
     </target>
 
@@ -101,7 +101,7 @@
     <target name="BEServer2" description="Running BEServer 2" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 31903 -mport 31175 -ncores 2 -seeds eceubuntu:33975"/>
+            <arg line="-host eceubuntu -pport 21903 -mport 21175 -ncores 2 -seeds eceubuntu:13975,eceubuntu:23975"/>
         </java>
     </target>
 
@@ -109,38 +109,44 @@
     <target name="BEServer3" description="Running BEServer 3" depends="compile">
         <java classname="BEServer" fork="true"
             classpathref="ece454750s15a1.classpath" failonerror="false" >
-            <arg line="-host eceubuntu -pport 41903 -mport 41175 -ncores 1 -seeds eceubuntu:33975"/>
+            <arg line="-host eceubuntu -pport 31903 -mport 31175 -ncores 3 -seeds eceubuntu:13975,eceubuntu:23975"/>
+        </java>
+    </target>
+
+    <target name="Client" depends="compile">
+        <java classname="Client" fork="true"
+            classpathref="ece454750s15a1.classpath" failonerror="false">
+            <arg line="eceubuntu 31357"/>
         </java>
     </target>
 
     <target name="Clients" description="Run Clients" depends="compile">
         <parallel>
             <java classname="Client" fork="true"
+                 classpathref="ece454750s15a1.classpath" failonerror="false">
+                <arg line="eceubuntu 11357"/>
+            </java>
+            <java classname="Client" fork="true"
                 classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 31375"/>
+                <arg line="eceubuntu 11357"/>
             </java>
             <java classname="Client" fork="true"
                  classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 31357"/>
+                <arg line="eceubuntu 21357"/>
             </java>
-            
-            <java classname="Client" fork="true"
-                classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 31357"/>
-            </java>
-            <java classname="Client" fork="true"
-                 classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 31357"/>
-            </java>
-        
         </parallel>    
     </target>
 
-    <target name="FESeed" description="Run FESeed" depends="compile">
-        <echo>[ece454750s15a1] FESeed</echo>
+    <target name="FESeed1" description="Run FESeed 1 " depends="compile">
         <java classname="FEServer" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="-host eceubuntu -pport 31357 -mport 33975 -ncores 6 -seeds eceubuntu:33975"/>
+            <arg line="-host eceubuntu -pport 11357 -mport 13975 -ncores 4 -seeds eceubuntu:13975,eceubuntu:23975"/>
+        </java>
+    </target>
+    <target name="FESeed2" description="Run FESeed 2" depends="compile">
+        <java classname="FEServer" fork="true"
+              classpathref="ece454750s15a1.classpath" failonerror="false">
+            <arg line="-host eceubuntu -pport 21357 -mport 23975 -ncores 6 -seeds eceubuntu:13975,eceubuntu:23975"/>
         </java>
     </target>
 	

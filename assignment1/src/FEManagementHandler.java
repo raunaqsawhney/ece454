@@ -48,7 +48,9 @@ public class FEManagementHandler implements FEManagement.Iface {
         return groupMembersList;
     }
 
-   public void joinCluster(String host, int pport, int mport, int ncores, int nodeType){
+   public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType){
+
+       boolean result = false;
 
        if (nodeType == 0) {
            // This is an FE Node trying to join the cluster
@@ -58,9 +60,14 @@ public class FEManagementHandler implements FEManagement.Iface {
            feNode.pport = pport;
            feNode.mport = mport;
            feNode.ncores = ncores;
+           
+           if (!feList.contains(feNode)) {
+               System.out.println("[FEManagementHandler] Added FE (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
+               return feList.add(feNode);
+           } else {
+               System.out.println("[FEManagementHandler] FE Already Exists (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
+           }
 
-           feList.add(feNode);
-           System.out.println("[FEManagementHandler] Added FE to cluster");
        } else {
 
            // This a BE Node trying to join the cluster
@@ -71,16 +78,20 @@ public class FEManagementHandler implements FEManagement.Iface {
            beNode.mport = mport;
            beNode.ncores = ncores;
 
-           beList.add(beNode);
-           System.out.println("[FEManagementHandler] Added BE to cluster");
+           if (!beList.contains(beNode)) {
+               System.out.println("[FEManagementHandler] Added BE (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
+               return beList.add(beNode);
+           } else {
+               System.out.println("[FEManagementHandler] BE Already Exists (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
+           }
        }
+       return false;
    }
 
     public ArrayList<String> getBEList() {
 
         ArrayList<String> stringBEList = new ArrayList<String>();
 
-        System.out.println("[FEManagementHandler] BEList (getBEList)");
         for (BEServer.BENode beListItem : beList) {
             stringBEList.add(beListItem.host + "," + beListItem.pport + "," + beListItem.mport + "," + beListItem.ncores);
         }
@@ -92,7 +103,6 @@ public class FEManagementHandler implements FEManagement.Iface {
 
         ArrayList<String> stringFEList = new ArrayList<String>();
 
-        System.out.println("[FEManagementHandler] FEList (getFEList)");
         for (FEServer.FENode feListItem : feList) {
             stringFEList.add(feListItem.host + "," + feListItem.pport + "," + feListItem.mport + "," + feListItem.ncores);
         }

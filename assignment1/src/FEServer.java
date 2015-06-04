@@ -93,16 +93,7 @@ public class FEServer {
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
-//			new Thread(feSyncList).start();
-
-//			if (!isFESeed()) {
-//				System.out.println("[FEServer] Starting FE Sync...");
-//				new Thread(feSyncPort).start();
-//			}
-
-			// Record time of when the service is started
-
-            executor.scheduleAtFixedRate(feSyncList, 0, 100, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(feSyncList, 0, 5, TimeUnit.SECONDS);
             
             serviceUpTime = System.currentTimeMillis();
 
@@ -112,19 +103,6 @@ public class FEServer {
 			x.printStackTrace();
 		}
     }
-
-	public static boolean isFESeed() {
-		boolean isFESeed = false;
-
-		// Differentiate between FESeed and FEServerc
-		for (FEServer.FESeed feSeed : seedList) {
-			if (host == feSeed.host && mport == feSeed.mport) {
-				System.out.println("[FEServer] FE Node with host " + feSeed.host + " and mport " + feSeed.mport + " is an FESeed");
-			}
-		}
-
-		return  isFESeed;
-	}
 
 	public static void startup(String[] args) {
 		try {
@@ -164,44 +142,41 @@ public class FEServer {
 			x.printStackTrace();
 		}
 
-		try {
-			System.out.println("host: " + host);
-			System.out.println("pport: " + pport);
-			System.out.println("mport: " + mport);
-			System.out.println("ncores: " + ncores);
+        try {
 
-			System.out.println();
+			System.out.println(host + "," + pport + "," + mport + "," + ncores);
 			System.out.println("Seeds:");
 			for (FEServer.FESeed seed : seedList){
-				System.out.println(seed.host + " " + seed.mport);
+				System.out.println(seed.host + ":" + seed.mport);
 			}
-/*
-		    int i = 0;
-			while (i < seedList.size())
-			{
-				System.out.println("[FEServer] seedList.get(" + i + ").host = " + seedList.get(i).host
-						+ " seedList.get(" + i + ").mport = " + seedList.get(i).mport);
 
-				TTransport transport;
-				transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
-				transport.open();
+            Random randGen = new Random();
+            int randomSeedIndex = randGen.nextInt(seedList.size());
 
-				TProtocol protocol = new TBinaryProtocol(transport);
-		        FEManagement.Client	client = new FEManagement.Client(protocol);
+            TTransport transport;
+            System.out.println("[FEServer] SEED host = " + seedList.get(randomSeedIndex).host + " SEED  mport = " + seedList.get(randomSeedIndex).mport);
+            transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
+            transport.open();
 
-				System.out.println("[FEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
+            TProtocol protocol = new TBinaryProtocol(transport);
+            FEManagement.Client client = new FEManagement.Client(protocol);
 
-				// joinCluster: last argument is node type, 0 = FE, 1 = BE
-				client.joinCluster(host, pport, mport, ncores, 0);
-				System.out.println("[FEServer] Joined Cluster");
+            System.out.println("[FEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
 
-				transport.close();
-				i++;
-			}
-*/
-		} catch(Exception x){
-			x.printStackTrace();
-		}
+            // Join cluster with node type BE, 0 = FE, 1 = BE
+            boolean result =  client.joinCluster(host, pport, mport, ncores, 0);
+            
+            if (!result) {
+                System.out.println("[FEServer] FE Unable to join cluster");
+            } else {
+                System.out.println("[FEServer] Joined Cluster");
+            }
+
+            transport.close();
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
+
 	}
 
 	public static void passwordPort(FEPassword.Processor processor) {
@@ -258,9 +233,6 @@ public class FEServer {
 	  
         try {
             
-            System.out.println("[FEServer] Time = " + System.currentTimeMillis());
-            System.out.println("[FEServer] Syncing FEServer host = " + host + " pport =  " + pport + " mport = " + mport + " ncores = " + ncores);
-
             Random randGen = new Random();
             int randomSeedIndex = randGen.nextInt(seedList.size());
 
@@ -277,14 +249,12 @@ public class FEServer {
             ArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
             ArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
 
-
-
             for (String beSyncListItem : beSyncList) {
-                System.out.println("[FEServer] beSyncList BENode " + beSyncListItem);
+                System.out.println("[FEServer] BESyncList BENode " + beSyncListItem);
             }   
 
             for (String feSyncListItem : feSyncList) {
-                System.out.println("[FEServer] feSyncList FENode " + feSyncListItem);
+                System.out.println("[FEServer] FESyncList FENode " + feSyncListItem);
             }
 
             transport.close();

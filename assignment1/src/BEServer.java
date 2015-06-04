@@ -26,6 +26,8 @@ public class BEServer {
         public int ncores;
 	}
 
+    public static boolean connectToAllKnownSeeds = false;
+
     public static BEPasswordHandler passwordHandler;
     public static BEPassword.Processor passwordProcessor;
 
@@ -69,8 +71,15 @@ public class BEServer {
                 }
             };
 
+            Runnable connectToSeed = new Runnable() {
+                public void run() {
+                    connectToSeed();
+                }
+            };
+
             new Thread(passwordPort).start();
             new Thread(managementPort).start();
+            new Thread(connectToSeed).start();
 
             // Record time of when the service is started
             serviceUpTime = System.currentTimeMillis();
@@ -106,9 +115,10 @@ public class BEServer {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    
     }
-	public static void startup(String[] args) {
 
+	public static void startup(String[] args) {
 		try {
 			seedList = new ArrayList<FEServer.FESeed>();
 			
@@ -140,49 +150,59 @@ public class BEServer {
 						tempSeed.mport = Integer.parseInt(tempSeedString[1]);
 						seedList.add(tempSeed);
 					}
-				}else{}
+				} else {}
 			}
 		} catch (Exception x) {
 			System.out.println("There is an issue with the CLI arguments");
 			x.printStackTrace();
 		}
+	}
+    
+    public static void connectToSeed() {
 
-		try {
-			System.out.println("host: " + host);
-			System.out.println("pport: " + pport);
-			System.out.println("mport: " + mport);
-			System.out.println("ncores: " + ncores);
-			
-			System.out.println();
-			System.out.println("Seeds:");
-			for (FEServer.FESeed seed : seedList){
-				System.out.println(seed.host + " " + seed.mport);
-			}
-	
-            int i = 0;
-			while (i < seedList.size())
-			{
-                System.out.println("[BEServer] seedList.get(" + i + ").host = " + seedList.get(i).host
-                        + " seedList.get(" + i + ").mport = " + seedList.get(i).mport);
+        while (!connectToAllKnownSeeds) {
+            try {
+                System.out.println(host + "," + pport + "," + mport + "," + ncores);
+                System.out.println("Seeds:");
+                for (FEServer.FESeed seed : seedList){
+                    System.out.println(seed.host + ":" + seed.mport);
+                }
+        
+                Random randGen = new Random();
+                int randomSeedIndex = randGen.nextInt(seedList.size());
 
                 TTransport transport;
-                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
-				transport.open();
+                System.out.println("[BEServer] SEED host = " + seedList.get(randomSeedIndex).host + " SEED  mport = " + seedList.get(randomSeedIndex).mport);
+                transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
+                transport.open();
+                
+                connectToAllKnownSeeds = true;
+                System.out.println("[BEServer] FESeed connection established");
 
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
                 System.out.println("[BEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
 
-                client.joinCluster(host, pport, mport, ncores, 1);
-                System.out.println("[BEServer] Joined Cluster");
+                // Join cluster with node type BE, 0 = FE, 1 = BE
+                boolean result =  client.joinCluster(host, pport, mport, ncores, 1);
+                
+                if (!result) {
+                    System.out.println("[FEServer] FE Unable to join cluster");
+                } else {
+                    System.out.println("[BEServer] Joined Cluster");
+                }
 
                 transport.close();
-                i++;
-            }
 
-		} catch(Exception x){
-			x.printStackTrace();
-		}
-	}
+            } catch (Exception x){
+                System.out.println("[BEServer] Waiting on FE Seed to connect...");
+                try {
+                     Thread.sleep(1000);
+                } catch (Exception y) {
+                    y.printStackTrace();
+                }
+            }
+        }
+    }
 }

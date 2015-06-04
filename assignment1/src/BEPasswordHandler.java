@@ -12,7 +12,7 @@ public class BEPasswordHandler implements BEPassword.Iface {
 		this.perfCounter = perfCounter;
 	}
 
-    public String hashPassword(String password, short logRounds) {
+    public String hashPassword(String password, short logRounds) throws ServiceUnavailableException {
 
         // Default log_rounds = 10
         System.out.println("[BEPasswordHandler] Password to HASH=" + password);
@@ -24,7 +24,7 @@ public class BEPasswordHandler implements BEPassword.Iface {
         return hashed;
     }
 
-    public boolean checkPassword(String password, String hash) {
+    public boolean checkPassword(String password, String hash) throws ServiceUnavailableException {
         System.out.println("[BEPasswordHandler] Password to Check=" + password);
 
         boolean result = false;

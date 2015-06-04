@@ -40,7 +40,9 @@ public class Client {
 //            TProtocol protocol = new TBinaryProtocol(transport);
 //            FEPassword.Client client = new FEPassword.Client(protocol);
 
-            perform(client);
+            for (int i = 0; i < 10; i++) {
+                perform(client);
+            }
 
             transport.close();
         } catch (TException x) {
@@ -50,14 +52,13 @@ public class Client {
 
     private static void perform(FEPassword.Client client) throws TException  {
         String passwordHash = client.hashPassword("ThisIsThePassword", (short) 10);
-        System.out.println("[Client] Password Hash =" + passwordHash);
-
         boolean checkPassword = client.checkPassword("ThisIsThePassword", passwordHash);
-        System.out.println("[Client] Check Password (Should Pass) =" + checkPassword);
 
-//        checkPassword = client.checkPassword("ThisIsNotThePassword", passwordHash);
-  //      System.out.println("[Client] Check Password (Should Fail) =" + checkPassword);
-
+        if (!checkPassword && passwordHash.isEmpty()) {
+            System.out.println("[Client] Request not completed");
+        } else {
+            System.out.println("[Client] Request completed");
+        }
     }
 
     private static void perform_man(FEManagement.Client client_man) throws TException {
