@@ -40,7 +40,7 @@ public class FEManagement {
 
     public List<String> getGroupMembers() throws org.apache.thrift.TException;
 
-    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException;
+    public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException;
 
     public List<String> getBEList() throws org.apache.thrift.TException;
 
@@ -126,10 +126,10 @@ public class FEManagement {
       throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "getGroupMembers failed: unknown result");
     }
 
-    public void joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException
+    public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException
     {
       send_joinCluster(host, pport, mport, ncores, nodeType);
-      recv_joinCluster();
+      return recv_joinCluster();
     }
 
     public void send_joinCluster(String host, int pport, int mport, int ncores, int nodeType) throws org.apache.thrift.TException
@@ -143,11 +143,14 @@ public class FEManagement {
       sendBase("joinCluster", args);
     }
 
-    public void recv_joinCluster() throws org.apache.thrift.TException
+    public boolean recv_joinCluster() throws org.apache.thrift.TException
     {
       joinCluster_result result = new joinCluster_result();
       receiveBase(result, "joinCluster");
-      return;
+      if (result.isSetSuccess()) {
+        return result.success;
+      }
+      throw new org.apache.thrift.TApplicationException(org.apache.thrift.TApplicationException.MISSING_RESULT, "joinCluster failed: unknown result");
     }
 
     public List<String> getBEList() throws org.apache.thrift.TException
@@ -304,13 +307,13 @@ public class FEManagement {
         prot.writeMessageEnd();
       }
 
-      public void getResult() throws org.apache.thrift.TException {
+      public boolean getResult() throws org.apache.thrift.TException {
         if (getState() != org.apache.thrift.async.TAsyncMethodCall.State.RESPONSE_READ) {
           throw new IllegalStateException("Method call not finished!");
         }
         org.apache.thrift.transport.TMemoryInputTransport memoryTransport = new org.apache.thrift.transport.TMemoryInputTransport(getFrameBuffer().array());
         org.apache.thrift.protocol.TProtocol prot = client.getProtocolFactory().getProtocol(memoryTransport);
-        (new Client(prot)).recv_joinCluster();
+        return (new Client(prot)).recv_joinCluster();
       }
     }
 
@@ -448,7 +451,8 @@ public class FEManagement {
 
       public joinCluster_result getResult(I iface, joinCluster_args args) throws org.apache.thrift.TException {
         joinCluster_result result = new joinCluster_result();
-        iface.joinCluster(args.host, args.pport, args.mport, args.ncores, args.nodeType);
+        result.success = iface.joinCluster(args.host, args.pport, args.mport, args.ncores, args.nodeType);
+        result.setSuccessIsSet(true);
         return result;
       }
     }
@@ -616,7 +620,7 @@ public class FEManagement {
       }
     }
 
-    public static class joinCluster<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, joinCluster_args, Void> {
+    public static class joinCluster<I extends AsyncIface> extends org.apache.thrift.AsyncProcessFunction<I, joinCluster_args, Boolean> {
       public joinCluster() {
         super("joinCluster");
       }
@@ -625,11 +629,13 @@ public class FEManagement {
         return new joinCluster_args();
       }
 
-      public AsyncMethodCallback<Void> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
+      public AsyncMethodCallback<Boolean> getResultHandler(final AsyncFrameBuffer fb, final int seqid) {
         final org.apache.thrift.AsyncProcessFunction fcall = this;
-        return new AsyncMethodCallback<Void>() { 
-          public void onComplete(Void o) {
+        return new AsyncMethodCallback<Boolean>() { 
+          public void onComplete(Boolean o) {
             joinCluster_result result = new joinCluster_result();
+            result.success = o;
+            result.setSuccessIsSet(true);
             try {
               fcall.sendResponse(fb,result, org.apache.thrift.protocol.TMessageType.REPLY,seqid);
               return;
@@ -661,7 +667,7 @@ public class FEManagement {
         return false;
       }
 
-      public void start(I iface, joinCluster_args args, org.apache.thrift.async.AsyncMethodCallback<Void> resultHandler) throws TException {
+      public void start(I iface, joinCluster_args args, org.apache.thrift.async.AsyncMethodCallback<Boolean> resultHandler) throws TException {
         iface.joinCluster(args.host, args.pport, args.mport, args.ncores, args.nodeType,resultHandler);
       }
     }
@@ -2761,6 +2767,7 @@ public class FEManagement {
   public static class joinCluster_result implements org.apache.thrift.TBase<joinCluster_result, joinCluster_result._Fields>, java.io.Serializable, Cloneable, Comparable<joinCluster_result>   {
     private static final org.apache.thrift.protocol.TStruct STRUCT_DESC = new org.apache.thrift.protocol.TStruct("joinCluster_result");
 
+    private static final org.apache.thrift.protocol.TField SUCCESS_FIELD_DESC = new org.apache.thrift.protocol.TField("success", org.apache.thrift.protocol.TType.BOOL, (short)0);
 
     private static final Map<Class<? extends IScheme>, SchemeFactory> schemes = new HashMap<Class<? extends IScheme>, SchemeFactory>();
     static {
@@ -2768,10 +2775,11 @@ public class FEManagement {
       schemes.put(TupleScheme.class, new joinCluster_resultTupleSchemeFactory());
     }
 
+    public boolean success; // required
 
     /** The set of fields this struct contains, along with convenience methods for finding and manipulating them. */
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
-;
+      SUCCESS((short)0, "success");
 
       private static final Map<String, _Fields> byName = new HashMap<String, _Fields>();
 
@@ -2786,6 +2794,8 @@ public class FEManagement {
        */
       public static _Fields findByThriftId(int fieldId) {
         switch(fieldId) {
+          case 0: // SUCCESS
+            return SUCCESS;
           default:
             return null;
         }
@@ -2824,9 +2834,15 @@ public class FEManagement {
         return _fieldName;
       }
     }
+
+    // isset id assignments
+    private static final int __SUCCESS_ISSET_ID = 0;
+    private byte __isset_bitfield = 0;
     public static final Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> metaDataMap;
     static {
       Map<_Fields, org.apache.thrift.meta_data.FieldMetaData> tmpMap = new EnumMap<_Fields, org.apache.thrift.meta_data.FieldMetaData>(_Fields.class);
+      tmpMap.put(_Fields.SUCCESS, new org.apache.thrift.meta_data.FieldMetaData("success", org.apache.thrift.TFieldRequirementType.DEFAULT, 
+          new org.apache.thrift.meta_data.FieldValueMetaData(org.apache.thrift.protocol.TType.BOOL)));
       metaDataMap = Collections.unmodifiableMap(tmpMap);
       org.apache.thrift.meta_data.FieldMetaData.addStructMetaDataMap(joinCluster_result.class, metaDataMap);
     }
@@ -2834,10 +2850,20 @@ public class FEManagement {
     public joinCluster_result() {
     }
 
+    public joinCluster_result(
+      boolean success)
+    {
+      this();
+      this.success = success;
+      setSuccessIsSet(true);
+    }
+
     /**
      * Performs a deep copy on <i>other</i>.
      */
     public joinCluster_result(joinCluster_result other) {
+      __isset_bitfield = other.__isset_bitfield;
+      this.success = other.success;
     }
 
     public joinCluster_result deepCopy() {
@@ -2846,15 +2872,51 @@ public class FEManagement {
 
     @Override
     public void clear() {
+      setSuccessIsSet(false);
+      this.success = false;
+    }
+
+    public boolean isSuccess() {
+      return this.success;
+    }
+
+    public joinCluster_result setSuccess(boolean success) {
+      this.success = success;
+      setSuccessIsSet(true);
+      return this;
+    }
+
+    public void unsetSuccess() {
+      __isset_bitfield = EncodingUtils.clearBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    /** Returns true if field success is set (has been assigned a value) and false otherwise */
+    public boolean isSetSuccess() {
+      return EncodingUtils.testBit(__isset_bitfield, __SUCCESS_ISSET_ID);
+    }
+
+    public void setSuccessIsSet(boolean value) {
+      __isset_bitfield = EncodingUtils.setBit(__isset_bitfield, __SUCCESS_ISSET_ID, value);
     }
 
     public void setFieldValue(_Fields field, Object value) {
       switch (field) {
+      case SUCCESS:
+        if (value == null) {
+          unsetSuccess();
+        } else {
+          setSuccess((Boolean)value);
+        }
+        break;
+
       }
     }
 
     public Object getFieldValue(_Fields field) {
       switch (field) {
+      case SUCCESS:
+        return Boolean.valueOf(isSuccess());
+
       }
       throw new IllegalStateException();
     }
@@ -2866,6 +2928,8 @@ public class FEManagement {
       }
 
       switch (field) {
+      case SUCCESS:
+        return isSetSuccess();
       }
       throw new IllegalStateException();
     }
@@ -2883,6 +2947,15 @@ public class FEManagement {
       if (that == null)
         return false;
 
+      boolean this_present_success = true;
+      boolean that_present_success = true;
+      if (this_present_success || that_present_success) {
+        if (!(this_present_success && that_present_success))
+          return false;
+        if (this.success != that.success)
+          return false;
+      }
+
       return true;
     }
 
@@ -2899,6 +2972,16 @@ public class FEManagement {
 
       int lastComparison = 0;
 
+      lastComparison = Boolean.valueOf(isSetSuccess()).compareTo(other.isSetSuccess());
+      if (lastComparison != 0) {
+        return lastComparison;
+      }
+      if (isSetSuccess()) {
+        lastComparison = org.apache.thrift.TBaseHelper.compareTo(this.success, other.success);
+        if (lastComparison != 0) {
+          return lastComparison;
+        }
+      }
       return 0;
     }
 
@@ -2919,6 +3002,9 @@ public class FEManagement {
       StringBuilder sb = new StringBuilder("joinCluster_result(");
       boolean first = true;
 
+      sb.append("success:");
+      sb.append(this.success);
+      first = false;
       sb.append(")");
       return sb.toString();
     }
@@ -2938,6 +3024,8 @@ public class FEManagement {
 
     private void readObject(java.io.ObjectInputStream in) throws java.io.IOException, ClassNotFoundException {
       try {
+        // it doesn't seem like you should have to do this, but java serialization is wacky, and doesn't call the default constructor.
+        __isset_bitfield = 0;
         read(new org.apache.thrift.protocol.TCompactProtocol(new org.apache.thrift.transport.TIOStreamTransport(in)));
       } catch (org.apache.thrift.TException te) {
         throw new java.io.IOException(te);
@@ -2962,6 +3050,14 @@ public class FEManagement {
             break;
           }
           switch (schemeField.id) {
+            case 0: // SUCCESS
+              if (schemeField.type == org.apache.thrift.protocol.TType.BOOL) {
+                struct.success = iprot.readBool();
+                struct.setSuccessIsSet(true);
+              } else { 
+                org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
+              }
+              break;
             default:
               org.apache.thrift.protocol.TProtocolUtil.skip(iprot, schemeField.type);
           }
@@ -2977,6 +3073,11 @@ public class FEManagement {
         struct.validate();
 
         oprot.writeStructBegin(STRUCT_DESC);
+        if (struct.isSetSuccess()) {
+          oprot.writeFieldBegin(SUCCESS_FIELD_DESC);
+          oprot.writeBool(struct.success);
+          oprot.writeFieldEnd();
+        }
         oprot.writeFieldStop();
         oprot.writeStructEnd();
       }
@@ -2994,11 +3095,24 @@ public class FEManagement {
       @Override
       public void write(org.apache.thrift.protocol.TProtocol prot, joinCluster_result struct) throws org.apache.thrift.TException {
         TTupleProtocol oprot = (TTupleProtocol) prot;
+        BitSet optionals = new BitSet();
+        if (struct.isSetSuccess()) {
+          optionals.set(0);
+        }
+        oprot.writeBitSet(optionals, 1);
+        if (struct.isSetSuccess()) {
+          oprot.writeBool(struct.success);
+        }
       }
 
       @Override
       public void read(org.apache.thrift.protocol.TProtocol prot, joinCluster_result struct) throws org.apache.thrift.TException {
         TTupleProtocol iprot = (TTupleProtocol) prot;
+        BitSet incoming = iprot.readBitSet(1);
+        if (incoming.get(0)) {
+          struct.success = iprot.readBool();
+          struct.setSuccessIsSet(true);
+        }
       }
     }
 
