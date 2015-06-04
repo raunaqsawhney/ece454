@@ -68,8 +68,7 @@ public class FEManagementHandler implements FEManagement.Iface {
                return feList.add(feNode);
            }
 
-       } else {
-
+       } else if (nodeType == 1) {
            // This a BE Node trying to join the cluster
 
            BEServer.BENode beNode = new BEServer.BENode();

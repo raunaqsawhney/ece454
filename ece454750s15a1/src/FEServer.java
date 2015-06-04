@@ -18,6 +18,7 @@ import org.apache.thrift.protocol.TProtocol;
 import java.lang.Exception;
 import java.lang.System;
 import java.util.*;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +61,7 @@ public class FEServer {
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
-	public static CopyOnWriteArrayList<FESeed> seedList = new CopyOnWriteArrayList<FESeed>();
+	public static ArrayList<FESeed> seedList = new ArrayList<FESeed>();
 
     public static CopyOnWriteArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<BEServer.BENode>();
     public static CopyOnWriteArrayList <FEServer.FENode> feSyncArrayList = new CopyOnWriteArrayList<FEServer.FENode>();
@@ -109,6 +110,12 @@ public class FEServer {
 				}
 			};
 
+            final Runnable checkForDeadFE = new Runnable() {
+                public void run() {
+                    checkforDeadFE();
+                }
+            };
+
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
@@ -116,6 +123,7 @@ public class FEServer {
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
             executor.scheduleAtFixedRate(checkForDeadBE, 0, 1, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(checkForDeadFE, 0, 1, TimeUnit.SECONDS);
 
             serviceUpTime = System.currentTimeMillis();
 
@@ -128,7 +136,7 @@ public class FEServer {
 
 	public static void startup(String[] args) {
 		try {
-			seedList = new CopyOnWriteArrayList<FEServer.FESeed>();
+			seedList = new ArrayList<FEServer.FESeed>();
 
 			for (int i = 0; i < args.length; i++){
 				if (args[i].equals("-host")){
@@ -186,9 +194,7 @@ public class FEServer {
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
                 // Join cluster with node type BE, 0 = FE, 1 = BE
-                boolean result =  client.joinCluster(host, pport, mport, ncores, 0);
-
-                if (!result) {
+                if (!client.joinCluster(host, pport, mport, ncores, 0)) {
                     System.out.println("[FEServer] FE Unable to join cluster");
                 } else {
                     System.out.println("[FEServer] Joined Cluster");
@@ -277,14 +283,12 @@ public class FEServer {
             TProtocol protocol = new TBinaryProtocol(transport);
             FEManagement.Client client = new FEManagement.Client(protocol);
 
-            List<String> beSyncList = client.getBEList();
-            List<String> feSyncList = client.getFEList();
-
-            beSyncArrayList = beListDecoder(beSyncList);
-            feSyncArrayList = feListDecoder(feSyncList);
+            beSyncArrayList = beListDecoder(client.getBEList());
+            feSyncArrayList = feListDecoder(client.getFEList());
 
             int numBE = 0;
             int numFE = 0;
+
             for (String beSyncListItem : beSyncList) {
                 numBE++;
                 System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
@@ -294,7 +298,7 @@ public class FEServer {
                 numFE++;
                 System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
             }
-            System.out.println("[FEServer] numBE: " + numBE + "---- numFE: " + numFE);
+            System.out.println("[FEServer] numBE: " + numBE + " ---- numFE: " + numFE);
 
             transport.close();
         } catch (Exception x) {
@@ -317,10 +321,30 @@ public class FEServer {
 				index++;
 			}
 		} catch (Exception x) {
-		    System.out.println("[FEServer] BE: " + beList.get(index).host + "," + beList.get(index).pport + "," + beList.get(index).mport + "," + beList.get(index).ncores);
+		    System.out.println("[FEServer] BE REMOVED: " + beList.get(index).host + "," + beList.get(index).pport + "," + beList.get(index).mport + "," + beList.get(index).ncores);
             beList.remove(index);
         }
 	}
+
+    public static void checkforDeadFE() {
+
+        int index = 0;
+
+        try {
+            TTransport transport;
+
+            for (FEServer.FENode feNode : feList) {
+                transport = new TSocket(feNode.host, feNode.pport);
+                transport.open();
+                transport.close();
+
+                index++;
+            }
+        } catch (Exception x) {
+            System.out.println("[FEServer] FE REMOVED: " + feList.get(index).host + "," + feList.get(index).pport + "," + feList.get(index).mport + "," + feList.get(index).ncores);
+            feList.remove(index);
+        }
+    }
 	
 	public static CopyOnWriteArrayList<FEServer.FENode> feListDecoder(List<String> list) {
 
