@@ -25,11 +25,11 @@
     <property name="build" location="build" />
 
     <path id="libs.classpath">
-        <fileset dir="../thrift-0.9.2/lib/java/build">
+        <fileset dir="../lib/">
             <include name="*.jar" />
             <exclude name="-test.jar" />
         </fileset>
-        <fileset dir="../thrift-0.9.2/lib/java/build/lib">
+        <fileset dir="../lib/">
             <include name="*.jar" />
         </fileset>
     </path>
@@ -59,20 +59,6 @@
     <!-- target name="ece454750s15a1" description="Run the assignment1" -->
     <target name="ece454750s15a1" description="Run the ece454750s15a1" depends="compile" >
         <jar jarfile="ece454750s15a1.jar" basedir="${build}"/>
-        <parallel>
-            <java classname="BEServer" fork="true" timeout="10000"
-                  classpathref="ece454750s15a1.classpath" failonerror="false" output="${build}/log/ece454750s15a1.log">
-                        <arg line="-host localhost -pport 1357 -mport 3975 -ncores 2 -seeds ecelinux1:1375,ecelinux1:5739"/>
-              </java>
-            <sequential>
-                <sleep seconds="2"/>
-                <echo>ece454750s15a1 client simple:</echo>
-                <java classname="Client"
-                      classpathref="ece454750s15a1.classpath" failonerror="true">
-                    <arg line="simple"/>
-                </java>
-            </sequential>
-        </parallel>
     </target>
 
     <target name="generate">
