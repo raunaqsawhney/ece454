@@ -88,13 +88,13 @@ public class FEServer {
 
 			final Runnable feSyncList = new Runnable() {
 				public void run() {
-					feSyncList(managementProcessor);
+					feSyncList();
 				}
 			};
 
 			final Runnable checkForDeadBE = new Runnable() {
 				public void run() {
-					checkforDeadBE(managementProcessor) {
+					checkforDeadBE();
 				}
 			};
 
@@ -102,7 +102,7 @@ public class FEServer {
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
-            executer.scheduleAtFixedRate(checkForDeadBE, 0, 1, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(checkForDeadBE, 0, 5, TimeUnit.SECONDS);
 
             serviceUpTime = System.currentTimeMillis();
 
@@ -238,7 +238,7 @@ public class FEServer {
         }
     }
 
-	public static void feSyncList(FEManagement.Processor processor) {
+	public static void feSyncList() {
 	  
         try {
             
@@ -272,7 +272,7 @@ public class FEServer {
         }
     }
 
-	public static void checkforDeadBE(FEManagement.Processor processor) {
+	public static void checkforDeadBE() {
 
 		int index = 0;
 

@@ -17,13 +17,13 @@ exception ServiceUnavailableException {
 service BEPassword {
     
     string hashPassword(1:string password, 2:i16 logRounds) throws (1:ServiceUnavailableException e),
-    bool checkPassword(1:string password, 2:string hash)
+    bool checkPassword(1:string password, 2:string hash) throws (1:ServiceUnavailableException e)
 }
 
 service FEPassword {
 
     string hashPassword(1:string password, 2:i16 logRounds) throws (1:ServiceUnavailableException e),
-    bool checkPassword(1:string password, 2:string hash)
+    bool checkPassword(1:string password, 2:string hash) throws (1:ServiceUnavailableException e)
 }
 
 service BEManagement {

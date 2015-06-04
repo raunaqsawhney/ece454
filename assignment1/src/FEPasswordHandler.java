@@ -19,7 +19,6 @@ import java.util.concurrent.*;
 //Generated code
 import ece454750s15a1.*;
 
-import javax.naming.ServiceUnavailableException;
 
 public class FEPasswordHandler implements FEPassword.Iface {
 
