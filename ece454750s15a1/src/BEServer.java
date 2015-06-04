@@ -161,17 +161,17 @@ public class BEServer {
 
         while (!connectToAllKnownSeeds) {
             try {
-                System.out.println(host + "," + pport + "," + mport + "," + ncores);
-                System.out.println("Seeds:");
+                System.out.println("[BEServer] ("host + "," + pport + "," + mport + "," + ncores + ")");
+                System.out.println("[BEServer] Known seeds:");
                 for (FEServer.FESeed seed : seedList){
-                    System.out.println(seed.host + ":" + seed.mport);
+                    System.out.println("BEServer] (" + seed.host + ":" + seed.mport + ")");
                 }
         
                 Random randGen = new Random();
                 int randomSeedIndex = randGen.nextInt(seedList.size());
 
                 TTransport transport;
-                System.out.println("[BEServer] SEED host = " + seedList.get(randomSeedIndex).host + " SEED  mport = " + seedList.get(randomSeedIndex).mport);
+                System.out.println("[BEServer] Random seed (" + seedList.get(randomSeedIndex).host + "," + seedList.get(randomSeedIndex).mport + ")");
                 transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
                 transport.open();
                 
@@ -181,13 +181,11 @@ public class BEServer {
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
-                System.out.println("[BEServer] host=" + host + " pport=" + pport + " mmport=" + mport + " ncores=" + ncores);
-
                 // Join cluster with node type BE, 0 = FE, 1 = BE
                 boolean result =  client.joinCluster(host, pport, mport, ncores, 1);
                 
                 if (!result) {
-                    System.out.println("[FEServer] FE Unable to join cluster");
+                    System.out.println("[BEServer] FE Unable to join cluster");
                 } else {
                     System.out.println("[BEServer] Joined Cluster");
                 }
