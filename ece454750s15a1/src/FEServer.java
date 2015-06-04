@@ -277,6 +277,18 @@ public class FEServer {
             ArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
             ArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
 
+            for (FEServer.FENode feNode : feSyncArrayList) {
+                if (!feList.contains(feNode)) {
+                    feList.add(feNode)
+                }
+            }
+
+            for (BEServer.BENode beNode : beSyncArrayList) {
+                if (!beList.contains(beNode)) {
+                    beList.add(beNode)
+                }
+            }
+
             int numBE = 0;
             int numFE = 0;
 
@@ -327,10 +339,9 @@ public class FEServer {
 			entry.pport = Integer.parseInt(entryString[1]);
 			entry.mport = Integer.parseInt(entryString[2]);
 			entry.ncores = Integer.parseInt(entryString[3]);
-			
+
 			tempList.add(entry);
 		}
-		
 		return tempList;
 	}
 	
@@ -345,10 +356,9 @@ public class FEServer {
 			entry.pport = Integer.parseInt(entryString[1]);
 			entry.mport = Integer.parseInt(entryString[2]);
 			entry.ncores = Integer.parseInt(entryString[3]);
-			
-			tempList.add(entry);
+
+            tempList.add(entry);
 		}
-		
 		return tempList;
 	}
 }
