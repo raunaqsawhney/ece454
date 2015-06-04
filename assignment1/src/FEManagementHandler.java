@@ -60,12 +60,12 @@ public class FEManagementHandler implements FEManagement.Iface {
            feNode.pport = pport;
            feNode.mport = mport;
            feNode.ncores = ncores;
-           
-           if (!feList.contains(feNode)) {
+
+           if (feList.contains(feNode)) {
+               System.out.println("[FEManagementHandler] FE Already Exists (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
+           } else {
                System.out.println("[FEManagementHandler] Added FE (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
                return feList.add(feNode);
-           } else {
-               System.out.println("[FEManagementHandler] FE Already Exists (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
            }
 
        } else {
@@ -78,11 +78,11 @@ public class FEManagementHandler implements FEManagement.Iface {
            beNode.mport = mport;
            beNode.ncores = ncores;
 
-           if (!beList.contains(beNode)) {
+           if (beList.contains(beNode)) {
+               System.out.println("[FEManagementHandler] BE Already Exists (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
+           } else {
                System.out.println("[FEManagementHandler] Added BE (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
                return beList.add(beNode);
-           } else {
-               System.out.println("[FEManagementHandler] BE Already Exists (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
            }
        }
        return false;

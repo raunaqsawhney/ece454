@@ -15,9 +15,11 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.protocol.TProtocol;
 
+import java.lang.Exception;
 import java.lang.System;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.TimeUnit;
 
 // Generated code
 import ece454750s15a1.*;
@@ -86,15 +88,22 @@ public class FEServer {
 
 			final Runnable feSyncList = new Runnable() {
 				public void run() {
-					feSyncList();
+					feSyncList(managementProcessor);
+				}
+			};
+
+			final Runnable checkForDeadBE = new Runnable() {
+				public void run() {
+					checkforDeadBE(managementProcessor) {
 				}
 			};
 
 			// Spawn service threads
 			new Thread(managementPort).start();
 			new Thread(passwordPort).start();
-            executor.scheduleAtFixedRate(feSyncList, 0, 5, TimeUnit.SECONDS);
-            
+            executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
+            executer.scheduleAtFixedRate(checkForDeadBE, 0, 1, TimeUnit.SECONDS);
+
             serviceUpTime = System.currentTimeMillis();
 
 		//	openPasswordPort();
@@ -229,7 +238,7 @@ public class FEServer {
         }
     }
 
-	public static  void feSyncList() {
+	public static void feSyncList(FEManagement.Processor processor) {
 	  
         try {
             
@@ -262,6 +271,25 @@ public class FEServer {
             x.printStackTrace();
         }
     }
+
+	public static void checkforDeadBE(FEManagement.Processor processor) {
+
+		int index = 0;
+
+		try {
+			TTransport transport;
+
+			for (BEServer.BENode beNode : beList) {
+				transport = new TSocket(beNode.host, beNode.pport);
+				transport.open();
+				transport.close();
+
+				index++;
+			}
+		} catch (Exception x) {
+			beList.remove(index);
+		}
+	}
 	
 	public static ArrayList<FEServer.FENode> feListDecoder(List<String> list) {
 		ArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
@@ -299,3 +327,4 @@ public class FEServer {
 		return tempList;
 	}
 }
+

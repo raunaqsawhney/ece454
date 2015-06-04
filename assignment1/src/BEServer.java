@@ -140,7 +140,6 @@ public class BEServer {
 					String tempSeedString[];
 					String tempSeedsList[] = args[i].split(",");
 					int numOfSeeds = tempSeedsList.length;
-			        System.out.println(String.valueOf(numOfSeeds));
 
 					for (int j = 0; j < numOfSeeds; j++){
 						FEServer.FESeed tempSeed = new FEServer.FESeed();

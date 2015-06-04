@@ -19,6 +19,8 @@ import java.util.concurrent.*;
 //Generated code
 import ece454750s15a1.*;
 
+import javax.naming.ServiceUnavailableException;
+
 public class FEPasswordHandler implements FEPassword.Iface {
 
 	private CopyOnWriteArrayList<BEServer.BENode> beList = null;
@@ -57,7 +59,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 		return -1;
 	}
 
-    public String hashPassword(String password, short logRounds) {
+    public String hashPassword(String password, short logRounds) throws ServiceUnavailableException {
 	
 	// TODO: Load balancing (Should be implemented as seperate function), retry connections, exception handling when no servers available
 	
@@ -91,7 +93,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
         return hashedPassword;
     }
 
-    public boolean checkPassword(String password, String hash) {
+    public boolean checkPassword(String password, String hash) throws ServiceUnavailableException {
 	
 		// TODO: Load balancing , retry connections, exception handling when no servers available
 		// Step 8 TODO: Smart connection pooling, reuse connections.
