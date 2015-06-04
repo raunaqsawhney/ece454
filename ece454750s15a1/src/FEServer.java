@@ -281,21 +281,8 @@ public class FEServer {
             beSyncArrayList = beListDecoder(beSyncList);
             feSyncArrayList = feListDecoder(feSyncList);
 
-            for (FEServer.FENode feNode : feSyncArrayList) {
-                if (!feList.contains(feNode)) {
-                    feList.add(feNode);
-                }
-            }
-
-            for (BEServer.BENode beNode : beSyncArrayList) {
-                if (!beList.contains(beNode)) {
-                    beList.add(beNode);
-                }
-            }
-
             int numBE = 0;
             int numFE = 0;
-
             for (String beSyncListItem : beSyncList) {
                 numBE++;
                 System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
@@ -309,7 +296,7 @@ public class FEServer {
 
             transport.close();
         } catch (Exception x) {
-            x.printStackTrace();
+            //x.printStackTrace();
         }
     }
 
