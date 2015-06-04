@@ -19,6 +19,7 @@ import java.lang.Exception;
 import java.lang.System;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 // Generated code
@@ -59,7 +60,10 @@ public class FEServer {
 	public static PerfCounters perfManager = new PerfCounters();
 	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
 	public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
-	public static ArrayList<FEServer.FESeed> seedList;
+	public static CopyOnWriteArrayList<FESeed> seedList = new CopyOnWriteArrayList<FESeed>();
+
+    CopyOnWriteArrayListArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<BEServer.BENode>();
+    CopyOnWriteArrayListArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<FEServer.FENode>();
 
 	public static void main(String[] args) {
 		try {
@@ -274,20 +278,20 @@ public class FEServer {
             List<String> beSyncList = client.getBEList();
             List<String> feSyncList = client.getFEList();
 
-            CopyOnWriteArrayListArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
-            CopyOnWriteArrayListArrayList   <FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
+            beSyncArrayList = beListDecoder(beSyncList);
+            feSyncArrayList = feListDecoder(feSyncList);
 
-            for (FEServer.FENode feNode : feSyncArrayList) {
-                if (!feList.contains(feNode)) {
-                    feList.add(feNode);
-                }
-            }
-
-            for (BEServer.BENode beNode : beSyncArrayList) {
-                if (!beList.contains(beNode)) {
-                    beList.add(beNode);
-                }
-            }
+//            for (FEServer.FENode feNode : feSyncArrayList) {
+//                if (!feList.contains(feNode)) {
+//                    feList.add(feNode);
+//                }
+//            }
+//
+//            for (BEServer.BENode beNode : beSyncArrayList) {
+//                if (!beList.contains(beNode)) {
+//                    beList.add(beNode);
+//                }
+//            }
 
             int numBE = 0;
             int numFE = 0;
@@ -329,6 +333,7 @@ public class FEServer {
 	}
 	
 	public static CopyOnWriteArrayListArrayList<FEServer.FENode> feListDecoder(List<String> list) {
+
         CopyOnWriteArrayListArrayList<FEServer.FENode> tempList = new CopyOnWriteArrayListArrayList<FEServer.FENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
@@ -346,6 +351,7 @@ public class FEServer {
 	}
 	
 	public static CopyOnWriteArrayListArrayList<BEServer.BENode> beListDecoder(List<String> list) {
+
         CopyOnWriteArrayListArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayListArrayList<BEServer.BENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
