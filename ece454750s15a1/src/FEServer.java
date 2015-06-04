@@ -165,7 +165,7 @@ public class FEServer {
 
 		while (!connectToAllKnownSeeds) {
 			try {
-				System.out.println("[FEServer] ("host + "," + pport + "," + mport + "," + ncores + ")");
+				System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
 				System.out.println("[FEServer] Known seeds:");
 				for (FEServer.FESeed seed : seedList){
 					System.out.println("FEServer] (" + seed.host + ":" + seed.mport + ")");
