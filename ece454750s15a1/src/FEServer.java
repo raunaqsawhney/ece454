@@ -166,49 +166,51 @@ public class FEServer {
 	}
 
 	public static void connectToSeed() {
+        TTransport transport;
+        int retryCount = 0;
 
-		while (!connectToAllKnownSeeds) {
-			try {
-				System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
-				System.out.println("[FEServer] Known seeds:");
-				for (FEServer.FESeed seed : seedList){
-					System.out.println("FEServer] (" + seed.host + ":" + seed.mport + ")");
-				}
+        for (int i = 0; i < seedList.size(); i++) {
+            try {
+                System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
+                System.out.println("[FEServer] Known seeds:");
+                for (FEServer.FESeed seed : seedList){
+                    System.out.println("FEServer] (" + seed.host + ":" + seed.mport + ")");
+                }
 
-				Random randGen = new Random();
-				int randomSeedIndex = randGen.nextInt(seedList.size());
+                System.out.println("[FEServer] Seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
+                transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
+                transport.open();
+                System.out.println("[FEServer] FESeed connection established");
 
-				TTransport transport;
-				System.out.println("[FEServer] Random seed (" + seedList.get(randomSeedIndex).host + "," + seedList.get(randomSeedIndex).mport + ")");
-				transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
-				transport.open();
+                TProtocol protocol = new TBinaryProtocol(transport);
+                FEManagement.Client client = new FEManagement.Client(protocol);
 
-				connectToAllKnownSeeds = true;
-				System.out.println("[FEServer] FESeed connection established");
+                // Join cluster with node type BE, 0 = FE, 1 = BE
+                boolean result =  client.joinCluster(host, pport, mport, ncores, 0);
 
-				TProtocol protocol = new TBinaryProtocol(transport);
-				FEManagement.Client client = new FEManagement.Client(protocol);
+                if (!result) {
+                    System.out.println("[FEServer] FE Unable to join cluster");
+                } else {
+                    System.out.println("[FEServer] Joined Cluster");
+                }
 
-				// Join cluster with node type BE, 0 = FE, 1 = BE
-				boolean result =  client.joinCluster(host, pport, mport, ncores, 0);
+                transport.close();
 
-				if (!result) {
-					System.out.println("[FEServer] FE Unable to join cluster");
-				} else {
-					System.out.println("[FEServer] Joined Cluster");
-				}
-
-				transport.close();
-
-			} catch (Exception x){
-				System.out.println("[FEServer] Waiting on FE Seed to connect...");
-				try {
-					Thread.sleep(1000);
-				} catch (Exception y) {
-					y.printStackTrace();
-				}
-			}
-		}
+            } catch (Exception x){
+                if (retryCount < 3) {
+                    System.out.println("[FEServer] Waiting on FE Seed to connect (" + retryCount + ")...");
+                    try {
+                        retryCount++;
+                        i--;
+                        Thread.sleep(1000);
+                    } catch (Exception y) {
+                        y.printStackTrace();
+                    }
+                }else{
+                    retryCount = 0;
+                }
+            }
+        }
 	}
 
 	public static void passwordPort(FEPassword.Processor processor) {
