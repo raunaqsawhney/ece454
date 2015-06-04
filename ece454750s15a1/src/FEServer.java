@@ -279,13 +279,13 @@ public class FEServer {
 
             for (FEServer.FENode feNode : feSyncArrayList) {
                 if (!feList.contains(feNode)) {
-                    feList.add(feNode);
+                    feList.add(feNode)
                 }
             }
 
             for (BEServer.BENode beNode : beSyncArrayList) {
                 if (!beList.contains(beNode)) {
-                    beList.add(beNode);
+                    beList.add(beNode)
                 }
             }
 
