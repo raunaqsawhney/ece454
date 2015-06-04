@@ -329,7 +329,7 @@ public class FEServer {
 	}
 	
 	public static CopyOnWriteArrayListArrayList<FEServer.FENode> feListDecoder(List<String> list) {
-        CopyOnWriteArrayListArrayList<FEServer.FENode> tempList = new ArrayList<FEServer.FENode>();
+        CopyOnWriteArrayListArrayList<FEServer.FENode> tempList = new CopyOnWriteArrayListArrayList<FEServer.FENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
@@ -346,7 +346,7 @@ public class FEServer {
 	}
 	
 	public static CopyOnWriteArrayListArrayList<BEServer.BENode> beListDecoder(List<String> list) {
-        CopyOnWriteArrayListArrayList<BEServer.BENode> tempList = new ArrayList<BEServer.BENode>();
+        CopyOnWriteArrayListArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayListArrayList<BEServer.BENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
