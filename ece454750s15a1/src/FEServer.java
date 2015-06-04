@@ -186,7 +186,7 @@ public class FEServer {
 				FEManagement.Client client = new FEManagement.Client(protocol);
 
 				// Join cluster with node type BE, 0 = FE, 1 = BE
-				boolean result =  client.joinCluster(host, pport, mport, ncores, 1);
+				boolean result =  client.joinCluster(host, pport, mport, ncores, 0);
 
 				if (!result) {
 					System.out.println("[FEServer] FE Unable to join cluster");
