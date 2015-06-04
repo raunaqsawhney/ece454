@@ -281,17 +281,17 @@ public class FEServer {
             beSyncArrayList = beListDecoder(beSyncList);
             feSyncArrayList = feListDecoder(feSyncList);
 
-//            for (FEServer.FENode feNode : feSyncArrayList) {
-//                if (!feList.contains(feNode)) {
-//                    feList.add(feNode);
-//                }
-//            }
-//
-//            for (BEServer.BENode beNode : beSyncArrayList) {
-//                if (!beList.contains(beNode)) {
-//                    beList.add(beNode);
-//                }
-//            }
+            for (FEServer.FENode feNode : feSyncArrayList) {
+                if (!feList.contains(feNode)) {
+                    feList.add(feNode);
+                }
+            }
+
+            for (BEServer.BENode beNode : beSyncArrayList) {
+                if (!beList.contains(beNode)) {
+                    beList.add(beNode);
+                }
+            }
 
             int numBE = 0;
             int numFE = 0;
