@@ -178,7 +178,7 @@ public class FEServer {
                 }
 
                 System.out.println("[FEServer] Seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
-                transport = new TSocket(seedList.get(randomSeedIndex).host, seedList.get(randomSeedIndex).mport);
+                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
                 transport.open();
                 System.out.println("[FEServer] FESeed connection established");
 
