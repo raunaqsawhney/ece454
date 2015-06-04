@@ -62,8 +62,8 @@ public class FEServer {
 	public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
 	public static CopyOnWriteArrayList<FESeed> seedList = new CopyOnWriteArrayList<FESeed>();
 
-    CopyOnWriteArrayListArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<BEServer.BENode>();
-    CopyOnWriteArrayListArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<FEServer.FENode>();
+    public static CopyOnWriteArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<BEServer.BENode>();
+    public static CopyOnWriteArrayList <FEServer.FENode> feSyncArrayList = new CopyOnWriteArrayList<FEServer.FENode>();
 
 	public static void main(String[] args) {
 		try {
@@ -128,7 +128,7 @@ public class FEServer {
 
 	public static void startup(String[] args) {
 		try {
-			seedList = new ArrayList<FEServer.FESeed>();
+			seedList = new CopyOnWriteArrayList<FEServer.FESeed>();
 
 			for (int i = 0; i < args.length; i++){
 				if (args[i].equals("-host")){
@@ -328,13 +328,14 @@ public class FEServer {
 				index++;
 			}
 		} catch (Exception x) {
-			beList.remove(index);
-		}
+		    System.out.println("[FEServer] BE: " + beList.get(index).host + "," + beList.get(index).pport + "," + beList.get(index).mport + "," + beList.get(index).ncores);
+            beList.remove(index);
+        }
 	}
 	
-	public static CopyOnWriteArrayListArrayList<FEServer.FENode> feListDecoder(List<String> list) {
+	public static CopyOnWriteArrayList<FEServer.FENode> feListDecoder(List<String> list) {
 
-        CopyOnWriteArrayListArrayList<FEServer.FENode> tempList = new CopyOnWriteArrayListArrayList<FEServer.FENode>();
+        CopyOnWriteArrayList<FEServer.FENode> tempList = new CopyOnWriteArrayList<FEServer.FENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
@@ -350,9 +351,9 @@ public class FEServer {
 		return tempList;
 	}
 	
-	public static CopyOnWriteArrayListArrayList<BEServer.BENode> beListDecoder(List<String> list) {
+	public static CopyOnWriteArrayList<BEServer.BENode> beListDecoder(List<String> list) {
 
-        CopyOnWriteArrayListArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayListArrayList<BEServer.BENode>();
+        CopyOnWriteArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayList<BEServer.BENode>();
 		ArrayList<String> stringList = new ArrayList<String>(list);
 		
 		for (String n : stringList){
