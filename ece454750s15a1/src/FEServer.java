@@ -277,14 +277,19 @@ public class FEServer {
             ArrayList<BEServer.BENode> beSyncArrayList = beListDecoder(beSyncList);
             ArrayList<FEServer.FENode> feSyncArrayList = feListDecoder(feSyncList);
 
+            int numBE = 0;
+            int numFE = 0;
+
             for (String beSyncListItem : beSyncList) {
+                numBE++;
                 System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
             }   
-            System.out.println("[FEServer] -----------------------------------------------");
+            System.out.println("[FEServer]");
             for (String feSyncListItem : feSyncList) {
+                numFE++;
                 System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
             }
-            System.out.println("[FEServer] //////////////////////////////////////////////");
+            System.out.println("[FEServer] numBE: " + numBE + "---- numFE: " + numFE);
 
             transport.close();
         } catch (Exception x) {
