@@ -284,7 +284,7 @@ public class FEServer {
             for (String feSyncListItem : feSyncList) {
                 System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
             }
-            System.out.println("[FEServer] -----------------------------------------------");
+            System.out.println("[FEServer] //////////////////////////////////////////////");
 
             transport.close();
         } catch (Exception x) {
