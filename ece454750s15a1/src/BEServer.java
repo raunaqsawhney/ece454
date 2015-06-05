@@ -85,8 +85,6 @@ public class BEServer {
             //passwordHandler = new BEPasswordHandler(perfManager);
             //passwordProcessor = new BEPassword.Processor(passwordHandler);
 
-            managementHandler = new BEManagementHandler(perfManager, serviceUpTime);
-            managementProcessor = new BEManagement.Processor(managementHandler);
             
             Runnable openPasswordPort = new Runnable() {
                 public void run() {
@@ -106,12 +104,11 @@ public class BEServer {
                 }
             };
 
+            serviceUpTime = System.currentTimeMillis();
             new Thread(openPasswordPort).start();
             new Thread(managementPort).start();
             new Thread(connectToSeed).start();
 
-            // Record time of when the service is started
-            serviceUpTime = System.currentTimeMillis();
 
         } catch (Exception x) {
             x.printStackTrace();
@@ -139,7 +136,7 @@ public class BEServer {
 
 			TServerTransport serverTransport = new TServerSocket(pport);
 			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(2*ncores);
+			args.maxWorkerThreads(4*ncores);
 			args.minWorkerThreads(ncores);
 			args.processor(passwordProcessor);
 			TServer server = new TThreadPoolServer(args);
@@ -154,6 +151,9 @@ public class BEServer {
 	
     public static void managementPort(BEManagement.Processor mangementProcessor) {
         try {
+            managementHandler = new BEManagementHandler(perfManager, serviceUpTime);
+            managementProcessor = new BEManagement.Processor(managementHandler);
+            
             TServerTransport serverTransport = new TServerSocket(mport);
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(managementProcessor));
