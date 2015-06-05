@@ -135,7 +135,7 @@ public class BEServer {
     public static void openPasswordPort() {
         try {
             passwordHandler = new BEPasswordHandler(perfManager);
-            passwordProcessor = new FEPassword.Processor(passwordHandler);
+            passwordProcessor = new BEPassword.Processor(passwordHandler);
 
             TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
             THsHaServer.Args arg = new THsHaServer.Args(socket);
