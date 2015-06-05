@@ -100,7 +100,7 @@
     <target name="Client" depends="compile">
         <java classname="Client" fork="true"
               classpathref="ece454750s15a1.classpath" failonerror="false">
-            <arg line="eceubuntu 31357"/>
+            <arg line="eceubuntu 11357 13975"/>
         </java>
     </target>
 
@@ -108,15 +108,15 @@
         <parallel>
             <java classname="Client" fork="true"
                   classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 11357"/>
+                <arg line="eceubuntu 11357 13975"/>
             </java>
             <java classname="Client" fork="true"
                   classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 11357"/>
+                <arg line="eceubuntu 11357 13975"/>
             </java>
             <java classname="Client" fork="true"
                   classpathref="ece454750s15a1.classpath" failonerror="false">
-                <arg line="eceubuntu 21357"/>
+                <arg line="eceubuntu 11357 13975"/>
             </java>
         </parallel>
     </target>
