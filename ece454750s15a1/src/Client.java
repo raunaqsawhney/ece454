@@ -1,3 +1,5 @@
+package ece454750s15a1;
+
 import ece454750s15a1.*;
 
 import org.apache.thrift.TException;
@@ -31,14 +33,14 @@ public class Client {
             passwordTransport.open();
 
             TTransport managementTransport;
-            managementTransport = new TSocket("eceubuntu", 31175);
+            managementTransport = new TSocket(host, mport);
             managementTransport.open();
 
             TProtocol passwordProtocol = new TBinaryProtocol(passwordTransport);
             FEPassword.Client passwordClient = new FEPassword.Client(passwordProtocol);
 
             TProtocol managementProtocol = new TBinaryProtocol(managementTransport);
-            BEManagement.Client managementClient = new BEManagement.Client(managementProtocol);
+            FEManagement.Client managementClient = new FEManagement.Client(managementProtocol);
 
             performPassword(passwordClient);
             performManagementGroup(managementClient);
@@ -62,7 +64,7 @@ public class Client {
         }
     }
 
-    public static void performManagementGroup(BEManagement.Client managementClient) throws TException {
+    public static void performManagementGroup(FEManagement.Client managementClient) throws TException {
 
         List<String> groupMembers = managementClient.getGroupMembers();
         for (String groupMember : groupMembers) {
@@ -70,7 +72,7 @@ public class Client {
         }
 
     }
-    private static void performManagement(BEManagement.Client managementClient) {
+    private static void performManagement(FEManagement.Client managementClient) {
         try {
             PerfCounters perfCounter = new PerfCounters();
             perfCounter = managementClient.getPerfCounters();
