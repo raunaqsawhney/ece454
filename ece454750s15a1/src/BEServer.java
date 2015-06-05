@@ -137,14 +137,12 @@ public class BEServer {
             passwordHandler = new BEPasswordHandler(perfManager);
             passwordProcessor = new BEPassword.Processor(passwordHandler);
 
-            TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
-            THsHaServer.Args arg = new THsHaServer.Args(socket);
-            arg.protocolFactory(new TBinaryProtocol.Factory());
-            arg.transportFactory(new TFramedTransport.Factory());
-            arg.processorFactory(new TProcessorFactory(passwordProcessor));
-            arg.workerThreads(ncores);
-
-            TServer server = new THsHaServer(arg);
+			TServerTransport serverTransport = new TServerSocket(pport);
+			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
+			args.maxWorkerThreads(ncores);
+			args.minWorkerThreads(1);
+			args.processor(passwordProcessor);
+			TServer server = new TThreadPoolServer(args);
 
             System.out.println("[BEServer] Started BE Password service on pport= " + pport);
             server.serve();
