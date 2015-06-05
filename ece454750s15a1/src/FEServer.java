@@ -198,14 +198,13 @@ public class FEServer {
 
 
 	public static void connectToSeed() {
-        TTransport transport;
         int retryCount = 0;
         boolean result = false;
 
         for (int i = 0; i < seedList.size(); i++) {
             try {
-		if (seedList.get(i).host == host && seedList.get(i).mport == mport)
-			continue;
+                if (seedList.get(i).host == host && seedList.get(i).mport == mport)
+                    continue;
 
                 System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
                 System.out.println("[FEServer] Known seeds:");
@@ -215,7 +214,7 @@ public class FEServer {
                 System.out.println("[FEServer] ----------------------");
 
                 System.out.println("[FEServer] Connecting to seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
-                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
+                TTransport transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
                 transport.open();
                 System.out.println("[FEServer] FESeed connection established");
 
@@ -234,12 +233,11 @@ public class FEServer {
                 }
 
                 transport.close();
-
             } catch (Exception x) {
-		x.printStackTrace();
-	}
-	}
-	}
+                x.printStackTrace();
+            }
+        }
+    }
 
     public static void openPasswordPort() {
         try {
