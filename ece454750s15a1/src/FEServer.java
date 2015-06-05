@@ -101,21 +101,21 @@ public class FEServer {
             //passwordHandler = new FEPasswordHandler(beList, perfManager);
             //passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-            
-            // Create service runnables
-            Runnable passwordPort = new Runnable() {
-                public void run() {
-                    //passwordPort(passwordProcessor);
-					openPasswordPort();
-                }
-            };
+//            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
+//            managementProcessor = new FEManagement.Processor(managementHandler);
 
-            final Runnable managementPort = new Runnable() {
-                public void run() {
-                    //managementPort(managementProcessor);
-					openManagementPort();
-                }
-            };
+            // Create service runnables
+//            Runnable passwordPort = new Runnable() {
+//                public void run() {
+//                    passwordPort(passwordProcessor);
+//                }
+//            };
+//
+//            final Runnable managementPort = new Runnable() {
+//                public void run() {
+//                    managementPort(managementProcessor);
+//                }
+//            };
 
             final Runnable connectToSeed = new Runnable() {
                 public void run() {
@@ -143,7 +143,7 @@ public class FEServer {
 
             // Spawn service threads
             new Thread(managementPort).start();
-            new Thread(passwordPort).start();
+            //new Thread(passwordPort).start();
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
@@ -152,7 +152,7 @@ public class FEServer {
 
             serviceUpTime = System.currentTimeMillis();
 
-            //openPasswordPort();
+            openPasswordPort();
 
         } catch (Exception x) {
             x.printStackTrace();
@@ -263,34 +263,14 @@ public class FEServer {
             passwordHandler = new FEPasswordHandler(beList,perfManager);
             passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-			TServerTransport serverTransport = new TServerSocket(pport);
-			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(ncores);
-			args.minWorkerThreads(1);
-			args.processor(passwordProcessor);
-			TServer server = new TThreadPoolServer(args);
-			
-            server.serve();
+            TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
+            THsHaServer.Args arg = new THsHaServer.Args(socket);
+            arg.protocolFactory(new TBinaryProtocol.Factory());
+            arg.transportFactory(new TFramedTransport.Factory());
+            arg.processorFactory(new TProcessorFactory(passwordProcessor));
+            arg.workerThreads(5);
 
-            System.out.println("[FEServer] HsHa Starting FE Password service on mport= " + pport);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-	
-	 public static void openManagementPort() {
-        try {
-            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-            managementProcessor = new FEManagement.Processor(managementHandler);
-
-			TServerTransport serverTransport = new TServerSocket(mport);
-			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(ncores);
-			args.minWorkerThreads(1);
-			args.processor(managementProcessor);
-			TServer server = new TThreadPoolServer(args);
-			
+            TServer server = new THsHaServer(arg);
             server.serve();
 
             System.out.println("[FEServer] HsHa Starting FE Password service on mport= " + pport);
