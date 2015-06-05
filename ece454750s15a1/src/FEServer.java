@@ -28,94 +28,94 @@ import ece454750s15a1.*;
 
 public class FEServer {
 
-	public static class FESeed {
-		
-		public String host;
-		public int mport;
-	}
+    public static class FESeed {
 
-	public static class FENode {
+        public String host;
+        public int mport;
+    }
 
-		public String host;
-		public int pport;
-		public int mport;
-		public int ncores;
-		
-		@Override
-		public int hashCode(){
-			final int prime = 29;
-			int result = 1;
-			result = prime  * result + host.hashCode();
-			result = prime * result + pport;
-			result = prime * result + mport;
-			result = prime * result + ncores;
-			return result;
-		}
-		
-		@Override
-		public boolean equals(Object obj){
-			if (this == obj){return true;}
-			if (obj == null){return false;}
-			if (getClass() != obj.getClass()){return false;}
-			FEServer.FENode other = (FEServer.FENode) obj;
-			if (!host.equals(other.host)){return false;}
-			if (pport != other.pport){return false;}
-			if (mport != other.mport){return false;}
-			if (ncores != other.ncores){return false;}	
-			return true;
-		}
-	
+    public static class FENode {
+
+        public String host;
+        public int pport;
+        public int mport;
+        public int ncores;
+
+        @Override
+        public int hashCode(){
+            final int prime = 29;
+            int result = 1;
+            result = prime  * result + host.hashCode();
+            result = prime * result + pport;
+            result = prime * result + mport;
+            result = prime * result + ncores;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj){
+            if (this == obj){return true;}
+            if (obj == null){return false;}
+            if (getClass() != obj.getClass()){return false;}
+            FEServer.FENode other = (FEServer.FENode) obj;
+            if (!host.equals(other.host)){return false;}
+            if (pport != other.pport){return false;}
+            if (mport != other.mport){return false;}
+            if (ncores != other.ncores){return false;}
+            return true;
+        }
+
     }
     public static boolean connectToAllKnownSeeds = false;
 
     public static ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-	public static FEPasswordHandler passwordHandler;
+    public static FEPasswordHandler passwordHandler;
     public static FEPassword.Processor passwordProcessor;
-	
+
     public static FEManagementHandler managementHandler;
     public static FEManagement.Processor managementProcessor;
 
-	public static String host;
-	public static int pport;
-	public static int mport;
-	public static int ncores;
+    public static String host;
+    public static int pport;
+    public static int mport;
+    public static int ncores;
 
-	public static Long serviceUpTime;
+    public static Long serviceUpTime;
 
-	public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
-	public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
+    public static PerfCounters perfManager = new PerfCounters();
+    public static CopyOnWriteArrayList<BEServer.BENode> beList = new CopyOnWriteArrayList<BEServer.BENode>();
+    public static CopyOnWriteArrayList<FEServer.FENode> feList = new CopyOnWriteArrayList<FEServer.FENode>();
+    public static ArrayList<FESeed> seedList = new ArrayList<FESeed>();
+
     public static CopyOnWriteArrayList <BEServer.BENode> beSyncArrayList = new CopyOnWriteArrayList<BEServer.BENode>();
     public static CopyOnWriteArrayList <FEServer.FENode> feSyncArrayList = new CopyOnWriteArrayList<FEServer.FENode>();
 
-    public static PerfCounters perfManager = new PerfCounters();
-    public static ArrayList<FESeed> seedList = new ArrayList<FESeed>();
+    public static void main(String[] args) {
+        try {
 
-	public static void main(String[] args) {
-		try {
+            // Start parsing the CLI
+            startup(args);
 
-			// Start parsing the CLI
-			startup(args);
+            // Create service thread handlers
+            //passwordHandler = new FEPasswordHandler(beList, perfManager);
+            //passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-			// Create service thread handlers
-			passwordHandler     = new FEPasswordHandler(beList, perfManager);
-			passwordProcessor   = new FEPassword.Processor(passwordHandler);
+            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
+            managementProcessor = new FEManagement.Processor(managementHandler);
 
-            managementHandler   = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-			managementProcessor = new FEManagement.Processor(managementHandler);
-
-			// Create service runnables
-            Runnable openPasswordPort = new Runnable() {
+            // Create service runnables
+            Runnable passwordPort = new Runnable() {
                 public void run() {
-                    openPasswordPort();
-				}
-			};
+                    passwordPort(passwordProcessor);
+                }
+            };
 
-			final Runnable openManagementPort = new Runnable() {
-				public void run() {
-                    openManagementPort();
-				}
-			};
+            final Runnable managementPort = new Runnable() {
+                public void run() {
+                    managementPort(managementProcessor);
+                }
+            };
 
             final Runnable connectToSeed = new Runnable() {
                 public void run() {
@@ -123,17 +123,17 @@ public class FEServer {
                 }
             };
 
-			final Runnable feSyncList = new Runnable() {
-				public void run() {
-					feSyncList();
-				}
-			};
+            final Runnable feSyncList = new Runnable() {
+                public void run() {
+                    feSyncList();
+                }
+            };
 
-			final Runnable checkForDeadBE = new Runnable() {
-				public void run() {
-					checkforDeadBE();
-				}
-			};
+            final Runnable checkForDeadBE = new Runnable() {
+                public void run() {
+                    checkforDeadBE();
+                }
+            };
 
             final Runnable checkForDeadFE = new Runnable() {
                 public void run() {
@@ -141,9 +141,9 @@ public class FEServer {
                 }
             };
 
-			// Spawn service threads
-			new Thread(openManagementPort).start();
-			new Thread(openPasswordPort).start();
+            // Spawn service threads
+            new Thread(managementPort).start();
+            //new Thread(passwordPort).start();
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
@@ -152,93 +152,109 @@ public class FEServer {
 
             serviceUpTime = System.currentTimeMillis();
 
-		} catch (Exception x) {
-			x.printStackTrace();
-		}
+            openPasswordPort();
+
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
     }
 
-	public static void startup(String[] args) {
-		try {
-			seedList = new ArrayList<FEServer.FESeed>();
+    public static void startup(String[] args) {
+        try {
+            seedList = new ArrayList<FEServer.FESeed>();
 
-			for (int i = 0; i < args.length; i++){
-				if (args[i].equals("-host")){
-					i++;
-					host = args[i];
-				}else if (args[i].equals("-pport")){
-					i++;
-					pport = Integer.parseInt(args[i]);
-				}else if (args[i].equals("-mport")){
-					i++;
-					mport = Integer.parseInt(args[i]);
-				}else if (args[i].equals("-ncores")){
-					i++;
-					ncores = Integer.parseInt(args[i]);
-				}else if (args[i].equals("-seeds")){
-					i++;
-					String tempSeedString[];
-					String tempSeedsList[] = args[i].split(",");
-					int numOfSeeds = tempSeedsList.length;
+            for (int i = 0; i < args.length; i++){
+                if (args[i].equals("-host")){
+                    i++;
+                    host = args[i];
+                }else if (args[i].equals("-pport")){
+                    i++;
+                    pport = Integer.parseInt(args[i]);
+                }else if (args[i].equals("-mport")){
+                    i++;
+                    mport = Integer.parseInt(args[i]);
+                }else if (args[i].equals("-ncores")){
+                    i++;
+                    ncores = Integer.parseInt(args[i]);
+                }else if (args[i].equals("-seeds")){
+                    i++;
+                    String tempSeedString[];
+                    String tempSeedsList[] = args[i].split(",");
+                    int numOfSeeds = tempSeedsList.length;
 
-					for (int j = 0; j < numOfSeeds; j++){
-						FEServer.FESeed tempSeed = new FEServer.FESeed();
+                    for (int j = 0; j < numOfSeeds; j++){
+                        FEServer.FESeed tempSeed = new FEServer.FESeed();
 
-						tempSeedString = tempSeedsList[j].split(":");
-						tempSeed.host = tempSeedString[0];
-						tempSeed.mport = Integer.parseInt(tempSeedString[1]);
-						seedList.add(tempSeed);
-					}
-				}else{}
-			}
-		} catch (Exception x) {
-			System.out.println("There is an issue with the CLI arguments");
-			x.printStackTrace();
-		}
-	}
+                        tempSeedString = tempSeedsList[j].split(":");
+                        tempSeed.host = tempSeedString[0];
+                        tempSeed.mport = Integer.parseInt(tempSeedString[1]);
+                        seedList.add(tempSeed);
+                    }
+                }else{}
+            }
+        } catch (Exception x) {
+            System.out.println("There is an issue with the CLI arguments");
+            x.printStackTrace();
+        }
+    }
 
-	public static void connectToSeed() {
+    public static void connectToSeed() {
+        TTransport transport;
         int retryCount = 0;
-        boolean result = false;
 
         for (int i = 0; i < seedList.size(); i++) {
             try {
-
-                // THOMAS: I changed this so that if a FESeed tries to join itself, it just skips to the next seed
-                // in the list.
-
-                if (seedList.get(i).host == host && seedList.get(i).mport == mport)
-                    continue;
-
                 System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
                 System.out.println("[FEServer] Known seeds:");
                 for (FEServer.FESeed seed : seedList){
-                    System.out.println("[FEServer] (" + seed.host + ":" + seed.mport + ")");
+                    System.out.println("FEServer] (" + seed.host + ":" + seed.mport + ")");
                 }
-                System.out.println("[FEServer] ----------------------");
 
-                System.out.println("[FEServer] Connecting to seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
-                TTransport transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
+                System.out.println("[FEServer] Seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
+                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
                 transport.open();
                 System.out.println("[FEServer] FESeed connection established");
 
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
-                System.out.println("JOINING CLUSTER....");
-                result = client.joinCluster(host, pport, mport, ncores, 0);
-                System.out.println("JOINED CLUSTER....");
-
                 // Join cluster with node type BE, 0 = FE, 1 = BE
-                if (!result) {
-                    System.out.println("[FEServer] FE unable to join cluster");
+                if (!client.joinCluster(host, pport, mport, ncores, 0)) {
+                    System.out.println("[FEServer] FE Unable to join cluster");
                 } else {
-                    System.out.println("[FEServer] Joined cluster");
+                    System.out.println("[FEServer] Joined Cluster");
                 }
 
                 transport.close();
-            } catch (Exception x) {
-                x.printStackTrace();
+
+            } catch (Exception x){
+                if (retryCount < 3) {
+                    System.out.println("[FEServer] Waiting on FE Seed to connect (" + retryCount + ")...");
+                    try {
+                        retryCount++;
+                        i--;
+                        Thread.sleep(1000);
+                    } catch (Exception y) {
+                        y.printStackTrace();
+                    }
+                }else{
+                    retryCount = 0;
+                }
             }
+        }
+    }
+
+    public static void passwordPort(FEPassword.Processor processor) {
+        try {
+            TServerTransport serverTransport = new TServerSocket(pport);
+            TServer server = new TSimpleServer(
+                    new Args(serverTransport).processor(processor));
+
+            System.out.println("[FEServer] Starting FE Password service on mport= " + pport);
+
+            server.serve();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -252,35 +268,27 @@ public class FEServer {
             arg.protocolFactory(new TBinaryProtocol.Factory());
             arg.transportFactory(new TFramedTransport.Factory());
             arg.processorFactory(new TProcessorFactory(passwordProcessor));
-            arg.workerThreads(ncores);
+            arg.workerThreads(5);
 
             TServer server = new THsHaServer(arg);
-
-            System.out.println("[FEServer] Started FE Password service on pport= " + pport);
             server.serve();
+
+            System.out.println("[FEServer] HsHa Starting FE Password service on mport= " + pport);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void openManagementPort() {
+    public static void managementPort(FEManagement.Processor processor) {
         try {
-            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-            managementProcessor = new FEManagement.Processor(managementHandler);
+            TServerTransport serverTransport = new TServerSocket(mport);
+            TServer server = new TSimpleServer(
+                    new Args(serverTransport).processor(processor));
 
-            TNonblockingServerSocket socket =  new TNonblockingServerSocket(mport);
-            THsHaServer.Args arg = new THsHaServer.Args(socket);
-            arg.protocolFactory(new TBinaryProtocol.Factory());
-            arg.transportFactory(new TFramedTransport.Factory());
-            arg.processorFactory(new TProcessorFactory(passwordProcessor));
-            arg.workerThreads(ncores);
+            System.out.println("[FEServer] Starting FE Management service on mport= " + mport);
 
-            TServer server = new THsHaServer(arg);
-
-            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
             server.serve();
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -289,6 +297,7 @@ public class FEServer {
     public static void feSyncList() {
 
         try {
+
             Random randGen = new Random();
             int randomSeedIndex = randGen.nextInt(seedList.size());
 
@@ -301,6 +310,23 @@ public class FEServer {
 
             beSyncArrayList = beListDecoder(client.getBEList());
             feSyncArrayList = feListDecoder(client.getFEList());
+
+//			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
+//			beTempSet.addAll(beList);
+//			beList = new CopyOnWriteArrayList<BEServer.BENode>(beTempSet);
+//			for (BEServer.BENode temp : beTempSet){
+//				numBE++;
+//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+//			}
+//
+//
+//			HashSet<FEServer.FENode> feTempSet = new HashSet<FEServer.FENode>(feSyncArrayList);
+//			feTempSet.addAll(feList);
+//			feList = new CopyOnWriteArrayList<FEServer.FENode>(feTempSet);
+//			for (FEServer.FENode temp : feTempSet){
+//				numFE++;
+//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+//			}
 
             for (FEServer.FENode feSyncNode : feSyncArrayList) {
                 if (!feList.contains(feSyncNode)) {
@@ -315,8 +341,19 @@ public class FEServer {
 
             int numBE = beList.size();
             int numFE = feList.size();
-
-            System.out.println("[FEServer] numBE: " + numBE + " ---- numFE: " + numFE);
+			
+            /*int numBE = 0;
+            int numFE = 0;
+            for (String beSyncListItem : beSyncList) {
+                numBE++;
+                System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
+            }   
+            System.out.println("[FEServer]");
+            for (String feSyncListItem : feSyncList) {
+                numFE++;
+                System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
+            }*/
+            System.out.println("[FEServer] numBE: " + numBE + "---- numFE: " + numFE);
 
             transport.close();
         } catch (Exception x) {
@@ -399,42 +436,4 @@ public class FEServer {
         }
         return tempList;
     }
-
-
-
-
-
-
-
-    // NOT NEEDED
-	public static void passwordPort(FEPassword.Processor processor) {
-		try {
-			TServerTransport serverTransport = new TServerSocket(pport);
-			TServer server = new TSimpleServer(
-					new Args(serverTransport).processor(processor));
-
-			System.out.println("[FEServer] Starting FE Password service on mport= " + pport);
-
-			server.serve();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-    public static void managementPort(FEManagement.Processor processor) {
-        try {
-            TServerTransport serverTransport = new TServerSocket(mport);
-            TServer server = new TSimpleServer(
-                    new Args(serverTransport).processor(processor));
-
-            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
-            server.serve();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
 }
-
