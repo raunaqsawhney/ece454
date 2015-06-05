@@ -24,6 +24,31 @@ public class BEServer {
 		public int pport;
         public int mport;
         public int ncores;
+		
+		@Override
+		public int hashCode(){
+			final int prime = 29;
+			int result = 1;
+			result = prime  * result + host.hashCode();
+			result = prime * result + pport;
+			result = prime * result + mport;
+			result = prime * result + ncores;
+			return result;
+		}
+		
+		@Override
+		public boolean equals(Object obj){
+			if (this == obj){return true;}
+			if (obj == null){return false;}
+			if (getClass() != obj.getClass()){return false;}
+			BEServer.BENode other = (BEServer.BENode) obj;
+			if (!host.equals(other.host)){return false;}
+			if (pport != other.pport){return false;}
+			if (mport != other.mport){return false;}
+			if (ncores != other.ncores){return false;}	
+			return true;
+		}
+		
 	}
 
     public static boolean connectToAllKnownSeeds = false;
