@@ -101,19 +101,19 @@ public class FEServer {
 			//passwordHandler = new FEPasswordHandler(beList, perfManager);
 			//passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-			managementProcessor = new FEManagement.Processor(managementHandler);
+            //managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
+			//managementProcessor = new FEManagement.Processor(managementHandler);
 
 			// Create service runnables
-            Runnable passwordPort = new Runnable() {
+            Runnable openPasswordPort = new Runnable() {
                 public void run() {
-					passwordPort(passwordProcessor);
+                    openPasswordPort();
 				}
 			};
 
-			final Runnable managementPort = new Runnable() {
+			final Runnable openManagementPort = new Runnable() {
 				public void run() {
-					managementPort(managementProcessor);
+                    openManagementPort();
 				}
 			};
 
@@ -142,8 +142,8 @@ public class FEServer {
             };
 
 			// Spawn service threads
-			new Thread(managementPort).start();
-			//new Thread(passwordPort).start();
+			new Thread(openManagementPort).start();
+			new Thread(openPasswordPort).start();
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
@@ -260,37 +260,42 @@ public class FEServer {
 
 	public static void openPasswordPort() {
         try {
-            System.out.println("[FEServer] Trying HsHa...");
-
             passwordHandler = new FEPasswordHandler(beList,perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 			
 			TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
-            System.out.println("[FEServer] Created socket....");
-
             THsHaServer.Args arg = new THsHaServer.Args(socket);
-            System.out.println("[FEServer] Did args...");
-
             arg.protocolFactory(new TBinaryProtocol.Factory());
-            System.out.println("[FEServer] Created pool factory (protocol)...");
-
             arg.transportFactory(new TFramedTransport.Factory());
-            System.out.println("[FEServer] Created pool factory (transport)...");
-
             arg.processorFactory(new TProcessorFactory(passwordProcessor));
-            System.out.println("[FEServer] Created pool factory (processor)...");
-
-            arg.workerThreads(5);
-            System.out.println("[FEServer] 5 worker threads...");
-
+            arg.workerThreads(ncores);
 
             TServer server = new THsHaServer(arg);
 
-            System.out.println("[FEServer] HsHa Starting FE Password service on pport (B)= " + pport);
-
+            System.out.println("[FEServer] Started FE Password service on pport= " + pport);
             server.serve();
-			
-			System.out.println("[FEServer] HsHa Starting FE Password service on pport (A)= " + pport);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void openManagementPort() {
+        try {
+            managementHandler = new FEManagementHandler(beList,perfManager);
+            managementProcessor = new FEManagement.Processor(managementHandler);
+
+            TNonblockingServerSocket socket =  new TNonblockingServerSocket(mport);
+            THsHaServer.Args arg = new THsHaServer.Args(socket);
+            arg.protocolFactory(new TBinaryProtocol.Factory());
+            arg.transportFactory(new TFramedTransport.Factory());
+            arg.processorFactory(new TProcessorFactory(passwordProcessor));
+            arg.workerThreads(ncores);
+
+            TServer server = new THsHaServer(arg);
+
+            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
+            server.serve();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -303,9 +308,9 @@ public class FEServer {
             TServer server = new TSimpleServer(
                     new Args(serverTransport).processor(processor));
 
-			System.out.println("[FEServer] Starting FE Management service on mport= " + mport);
-
+            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
             server.serve();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

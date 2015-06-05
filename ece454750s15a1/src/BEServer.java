@@ -78,15 +78,15 @@ public class BEServer {
 	    }
 
         try {
-            passwordHandler = new BEPasswordHandler(perfManager);
-            passwordProcessor = new BEPassword.Processor(passwordHandler);
+            //passwordHandler = new BEPasswordHandler(perfManager);
+            //passwordProcessor = new BEPassword.Processor(passwordHandler);
 
             managementHandler = new BEManagementHandler(perfManager, serviceUpTime);
             managementProcessor = new BEManagement.Processor(managementHandler);
             
-            Runnable passwordPort = new Runnable() {
+            Runnable openPasswordPort = new Runnable() {
                 public void run() {
-                    passwordPort(passwordProcessor);
+                    openPasswordPort();
                 }
             };
 
@@ -102,7 +102,7 @@ public class BEServer {
                 }
             };
 
-            new Thread(passwordPort).start();
+            new Thread(openPasswordPort).start();
             new Thread(managementPort).start();
             new Thread(connectToSeed).start();
 
@@ -123,6 +123,28 @@ public class BEServer {
             System.out.println("[BEServer] Starting BE Password service on mport= " + pport);
 
             server.serve();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void openPasswordPort() {
+        try {
+            passwordHandler = new FEPasswordHandler(beList,perfManager);
+            passwordProcessor = new FEPassword.Processor(passwordHandler);
+
+            TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
+            THsHaServer.Args arg = new THsHaServer.Args(socket);
+            arg.protocolFactory(new TBinaryProtocol.Factory());
+            arg.transportFactory(new TFramedTransport.Factory());
+            arg.processorFactory(new TProcessorFactory(passwordProcessor));
+            arg.workerThreads(ncores);
+
+            TServer server = new THsHaServer(arg);
+
+            System.out.println("[BEServer] Started BE Password service on pport= " + pport);
+            server.serve();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
