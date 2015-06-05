@@ -143,7 +143,7 @@ public class FEServer {
 
             // Spawn service threads
             new Thread(managementPort).start();
-            //new Thread(passwordPort).start();
+            new Thread(passwordPort).start();
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
@@ -152,7 +152,7 @@ public class FEServer {
 
             serviceUpTime = System.currentTimeMillis();
 
-            openPasswordPort();
+            //openPasswordPort();
 
         } catch (Exception x) {
             x.printStackTrace();
