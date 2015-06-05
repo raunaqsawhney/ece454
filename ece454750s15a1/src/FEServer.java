@@ -260,20 +260,37 @@ public class FEServer {
 
 	public static void openPasswordPort() {
         try {
-			passwordHandler = new FEPasswordHandler(beList,perfManager);
+            System.out.println("[FEServer] Trying HsHa...");
+
+            passwordHandler = new FEPasswordHandler(beList,perfManager);
 			passwordProcessor = new FEPassword.Processor(passwordHandler);
 			
 			TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
-            THsHaServer.Args arg = new THsHaServer.Args(socket);
-			arg.protocolFactory(new TBinaryProtocol.Factory());
-			arg.transportFactory(new TFramedTransport.Factory());
-			arg.processorFactory(new TProcessorFactory(passwordProcessor));
-			arg.workerThreads(5);
+            System.out.println("[FEServer] Created socket....");
 
-			TServer server = new THsHaServer(arg);
+            THsHaServer.Args arg = new THsHaServer.Args(socket);
+            System.out.println("[FEServer] Did args...");
+
+            arg.protocolFactory(new TBinaryProtocol.Factory());
+            System.out.println("[FEServer] Created pool factory (protocol)...");
+
+            arg.transportFactory(new TFramedTransport.Factory());
+            System.out.println("[FEServer] Created pool factory (transport)...");
+
+            arg.processorFactory(new TProcessorFactory(passwordProcessor));
+            System.out.println("[FEServer] Created pool factory (processor)...");
+
+            arg.workerThreads(5);
+            System.out.println("[FEServer] 5 worker threads...");
+
+
+            TServer server = new THsHaServer(arg);
+
+            System.out.println("[FEServer] HsHa Starting FE Password service on pport (B)= " + pport);
+
             server.serve();
 			
-			System.out.println("[FEServer] HsHa Starting FE Password service on mport= " + pport);
+			System.out.println("[FEServer] HsHa Starting FE Password service on pport (A)= " + pport);
 
         } catch (Exception e) {
             e.printStackTrace();
