@@ -204,6 +204,9 @@ public class FEServer {
 
         for (int i = 0; i < seedList.size(); i++) {
             try {
+		if (seedList.get(i).host == host && seedList.get(i).mport == mport)
+			continue;
+
                 System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
                 System.out.println("[FEServer] Known seeds:");
                 for (FEServer.FESeed seed : seedList){
@@ -232,21 +235,10 @@ public class FEServer {
 
                 transport.close();
 
-            } catch (Exception x){
-                if (retryCount < 3) {
-                    System.out.println("[FEServer] Waiting on FE Seed to connect (" + retryCount + ")...");
-                    try {
-                        retryCount++;
-                        i--;
-                        Thread.sleep(1000);
-                    } catch (Exception y) {
-                        y.printStackTrace();
-                    }
-                }else{
-                    retryCount = 0;
-                }
-            }
-        }
+            } catch (Exception x) {
+		x.printStackTrace();
+	}
+	}
 	}
 
     public static void openPasswordPort() {
