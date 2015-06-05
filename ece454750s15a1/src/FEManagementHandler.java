@@ -49,11 +49,12 @@ public class FEManagementHandler implements FEManagement.Iface {
     }
 
    public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType){
-
+       System.out.println("INside join cluster");
        boolean result = false;
 
        if (nodeType == 0) {
            // This is an FE Node trying to join the cluster
+           System.out.println("FE NODE");
 
            FEServer.FENode feNode = new FEServer.FENode();
            feNode.host = host;
