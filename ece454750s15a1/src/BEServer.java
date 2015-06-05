@@ -1,14 +1,18 @@
+import org.apache.thrift.TProcessorFactory;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TServer.Args;
 import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TSSLTransportFactory;
 import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TSocket;
-import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 
 import java.util.*;
@@ -130,7 +134,7 @@ public class BEServer {
 
     public static void openPasswordPort() {
         try {
-            passwordHandler = new FEPasswordHandler(beList,perfManager);
+            passwordHandler = new BEPasswordHandler(perfManager);
             passwordProcessor = new FEPassword.Processor(passwordHandler);
 
             TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
