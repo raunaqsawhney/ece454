@@ -265,8 +265,8 @@ public class FEServer {
 
 			TServerTransport serverTransport = new TServerSocket(pport);
 			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(ncores);
-			args.minWorkerThreads(1);
+			args.maxWorkerThreads(2*ncores);
+			args.minWorkerThreads(ncores);
 			args.processor(passwordProcessor);
 			TServer server = new TThreadPoolServer(args);
 			
@@ -286,8 +286,8 @@ public class FEServer {
 
 			TServerTransport serverTransport = new TServerSocket(mport);
 			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(ncores);
-			args.minWorkerThreads(1);
+			args.maxWorkerThreads(2*ncores);
+			args.minWorkerThreads(ncores);
 			args.processor(managementProcessor);
 			TServer server = new TThreadPoolServer(args);
 			

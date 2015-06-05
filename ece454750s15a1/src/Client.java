@@ -9,56 +9,74 @@ import org.apache.thrift.transport.TSSLTransportFactory.TSSLTransportParameters;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import java.util.*;
-
+import org.apache.thrift.transport.TNonblockingSocket;
 public class Client {
 	
 	private static String host;
 	private static int pport;
-	
+	private static int mport;
+
     public static void main(String [] args) {
         if (args.length < 2) {
             System.exit(0);
         }else{
 			host = args[0];
 			pport = Integer.parseInt(args[1]);
+            mport = Integer.parseInt(args[2]);
 		}
 
         try {
-            TTransport transport;
-            transport = new TSocket(host, pport);
-            transport.open();
+            TTransport passwordTransport;
+            passwordTransport = new TSocket(host, pport);
+            passwordTransport.open();
 
-            TProtocol protocol = new TBinaryProtocol(transport);
-            FEPassword.Client client = new FEPassword.Client(protocol);
+            TTransport managementTransport;
+            managementTransport = new TSocket(host, mport);
+            managementTransport.open();
 
-            for (int i = 0; i < 10; i++) {
-                perform(client);
-            }
-            FEManagement.Client client_man = new FEManagement.Client(protocol);
-            perform_man(client_man);
+            TProtocol passwordProtocol = new TBinaryProtocol(passwordTransport);
+            FEPassword.Client passwordClient = new FEPassword.Client(passwordProtocol);
 
-            transport.close();
-        } catch (TException x) {
+            TProtocol managementProtocol = new TBinaryProtocol(managementTransport);
+            FEManagement.Client managementClient = new FEManagement.Client(managementProtocol);
+
+            performPassword(passwordClient);
+            performManagementGroup(managementClient);
+            performManagement(managementClient);
+           
+            passwordTransport.close();
+            managementTransport.close();
+        } catch (Exception x) {
             x.printStackTrace();
         }
     }
 
-    private static void perform(FEPassword.Client client) throws TException  {
-        String passwordHash = client.hashPassword("ThisIsThePassword", (short) 10);
-        boolean checkPassword = client.checkPassword("ThisIsThePassword", passwordHash);
+    private static void performPassword(FEPassword.Client passwordClient) throws TException  {
+        String passwordHash = passwordClient.hashPassword("ThisIsThePassword", (short) 10);
+        boolean checkPassword = passwordClient.checkPassword("ThisIsThePassword", passwordHash);
 
-        if (!checkPassword && passwordHash.isEmpty()) {
+        if (!checkPassword || passwordHash.isEmpty()) {
             System.out.println("[Client] Request not completed");
         } else {
             System.out.println("[Client] Request completed");
         }
     }
 
-    private static void perform_man(FEManagement.Client client_man) throws TException {
-        PerfCounters perfCounter = new PerfCounters();
-        perfCounter = client_man.getPerfCounters();
+    public static void performManagementGroup(FEManagement.Client managementClient) throws TException {
 
-        System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
+        List<String> groupMembers = managementClient.getGroupMembers();
+        for (String groupMember : groupMembers) {
+            System.out.println(groupMember);
+        }
+    }
 
+    private static void performManagement(FEManagement.Client managementClient) {
+        try {
+            PerfCounters perfCounter = new PerfCounters();
+            perfCounter = managementClient.getPerfCounters();
+            System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
+        } catch (Exception x) {
+            x.printStackTrace();
+        }
     }
 }

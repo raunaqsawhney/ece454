@@ -29,6 +29,7 @@ public class FEManagementHandler implements FEManagement.Iface {
 
     public PerfCounters getPerfCounters() {
 
+        System.out.println("Entered getPerfCounters");
         perfCounter.numSecondsUp = (int)(System.currentTimeMillis() - serviceUpTime);
         perfCounter.numRequestsReceived = perfManager.numRequestsReceived;
         perfCounter.numRequestsCompleted = perfManager.numRequestsCompleted;
