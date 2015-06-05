@@ -48,45 +48,44 @@ public class FEManagementHandler implements FEManagement.Iface {
         return groupMembersList;
     }
 
-   public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType){
-       System.out.println("INside join cluster");
-       boolean result = false;
+    public boolean joinCluster(String host, int pport, int mport, int ncores, int nodeType){
 
-       if (nodeType == 0) {
-           // This is an FE Node trying to join the cluster
-           System.out.println("FE NODE");
+        boolean result = false;
 
-           FEServer.FENode feNode = new FEServer.FENode();
-           feNode.host = host;
-           feNode.pport = pport;
-           feNode.mport = mport;
-           feNode.ncores = ncores;
+        if (nodeType == 0) {
+            // This is an FE Node trying to join the cluster
 
-           if (feList.contains(feNode)) {
-               System.out.println("[FEManagementHandler] FE Already Exists (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
-           } else {
-               System.out.println("[FEManagementHandler] Added FE (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
-               return feList.add(feNode);
-           }
+            FEServer.FENode feNode = new FEServer.FENode();
+            feNode.host = host;
+            feNode.pport = pport;
+            feNode.mport = mport;
+            feNode.ncores = ncores;
 
-       } else if (nodeType == 1) {
-           // This a BE Node trying to join the cluster
+            if (feList.contains(feNode)) {
+                System.out.println("[FEManagementHandler] FE Already Exists (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
+            } else {
+                System.out.println("[FEManagementHandler] Added FE (" + feNode.host + "," + feNode.pport + "," + feNode.mport + "," + feNode.ncores + ")");
+                return feList.add(feNode);
+            }
 
-           BEServer.BENode beNode = new BEServer.BENode();
-           beNode.host = host;
-           beNode.pport = pport;
-           beNode.mport = mport;
-           beNode.ncores = ncores;
+        } else if (nodeType == 1) {
+            // This a BE Node trying to join the cluster
 
-           if (beList.contains(beNode)) {
-               System.out.println("[FEManagementHandler] BE Already Exists (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
-           } else {
-               System.out.println("[FEManagementHandler] Added BE (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
-               return beList.add(beNode);
-           }
-       }
-       return false;
-   }
+            BEServer.BENode beNode = new BEServer.BENode();
+            beNode.host = host;
+            beNode.pport = pport;
+            beNode.mport = mport;
+            beNode.ncores = ncores;
+
+            if (beList.contains(beNode)) {
+                System.out.println("[FEManagementHandler] BE Already Exists (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
+            } else {
+                System.out.println("[FEManagementHandler] Added BE (" + beNode.host + "," + beNode.pport + "," + beNode.mport + "," + beNode.ncores + ")");
+                return beList.add(beNode);
+            }
+        }
+        return false;
+    }
 
     public ArrayList<String> getBEList() {
 
