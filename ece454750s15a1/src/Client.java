@@ -25,7 +25,7 @@ public class Client {
 
         try {
             TSocket socket = new TSocket(host, beList.get(pport);
-            TTransport transport = new TFramedTransport(socket);
+            TTransport transport = new TTransport(socket);
 
             transport.open();
 
