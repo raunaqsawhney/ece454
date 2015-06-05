@@ -273,7 +273,7 @@ public class FEServer {
 			TServer server = new THsHaServer(arg);
             server.serve();
 			
-			System.out.println("[FEServer] Starting FE Password service on mport= " + pport);
+			System.out.println("[FEServer] HsHa Starting FE Password service on mport= " + pport);
 
         } catch (Exception e) {
             e.printStackTrace();
