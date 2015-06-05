@@ -105,6 +105,7 @@ public class FEServer {
 			//managementProcessor = new FEManagement.Processor(managementHandler);
 
 			// Create service runnables
+
             Runnable openPasswordPort = new Runnable() {
                 public void run() {
                     openPasswordPort();
@@ -151,8 +152,6 @@ public class FEServer {
             executor.scheduleAtFixedRate(checkForDeadFE, 0, 500, TimeUnit.MILLISECONDS);
 
             serviceUpTime = System.currentTimeMillis();
-
-			openPasswordPort();
 
 		} catch (Exception x) {
 			x.printStackTrace();
@@ -244,26 +243,12 @@ public class FEServer {
         }
 	}
 
-	public static void passwordPort(FEPassword.Processor processor) {
-		try {
-			TServerTransport serverTransport = new TServerSocket(pport);
-			TServer server = new TSimpleServer(
-					new Args(serverTransport).processor(processor));
-
-			System.out.println("[FEServer] Starting FE Password service on mport= " + pport);
-
-			server.serve();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static void openPasswordPort() {
+    public static void openPasswordPort() {
         try {
             passwordHandler = new FEPasswordHandler(beList,perfManager);
-			passwordProcessor = new FEPassword.Processor(passwordHandler);
-			
-			TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
+            passwordProcessor = new FEPassword.Processor(passwordHandler);
+
+            TNonblockingServerSocket socket =  new TNonblockingServerSocket(pport);
             THsHaServer.Args arg = new THsHaServer.Args(socket);
             arg.protocolFactory(new TBinaryProtocol.Factory());
             arg.transportFactory(new TFramedTransport.Factory());
@@ -272,7 +257,7 @@ public class FEServer {
 
             TServer server = new THsHaServer(arg);
 
-            System.out.println("[FEServer] Started FE Password service on pport= " + pport);
+            System.out.println("[FEServer] Started HSHA FE Password service on pport= " + pport);
             server.serve();
 
         } catch (Exception e) {
@@ -294,21 +279,7 @@ public class FEServer {
 
             TServer server = new THsHaServer(arg);
 
-            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
-            server.serve();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-	
-    public static void managementPort(FEManagement.Processor processor) {
-        try {
-            TServerTransport serverTransport = new TServerSocket(mport);
-            TServer server = new TSimpleServer(
-                    new Args(serverTransport).processor(processor));
-
-            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
+            System.out.println("[FEServer] Started HSHA FE Management service on mport= " + mport);
             server.serve();
 
         } catch (Exception e) {
@@ -316,10 +287,10 @@ public class FEServer {
         }
     }
 
-	public static void feSyncList() {
-	  
+    public static void feSyncList() {
+
         try {
-            
+
             Random randGen = new Random();
             int randomSeedIndex = randGen.nextInt(seedList.size());
 
@@ -363,13 +334,13 @@ public class FEServer {
 
             int numBE = beList.size();
             int numFE = feList.size();
-			
+
             /*int numBE = 0;
             int numFE = 0;
             for (String beSyncListItem : beSyncList) {
                 numBE++;
                 System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
-            }   
+            }
             System.out.println("[FEServer]");
             for (String feSyncListItem : feSyncList) {
                 numFE++;
@@ -383,25 +354,25 @@ public class FEServer {
         }
     }
 
-	public static void checkforDeadBE() {
+    public static void checkforDeadBE() {
 
-		int index = 0;
+        int index = 0;
 
-		try {
-			TTransport transport;
+        try {
+            TTransport transport;
 
-			for (BEServer.BENode beNode : beList) {
-				transport = new TSocket(beNode.host, beNode.pport);
-				transport.open();
-				transport.close();
+            for (BEServer.BENode beNode : beList) {
+                transport = new TSocket(beNode.host, beNode.pport);
+                transport.open();
+                transport.close();
 
-				index++;
-			}
-		} catch (Exception x) {
-		    System.out.println("[FEServer] BE REMOVED: " + beList.get(index).host + "," + beList.get(index).pport + "," + beList.get(index).mport + "," + beList.get(index).ncores);
+                index++;
+            }
+        } catch (Exception x) {
+            System.out.println("[FEServer] BE REMOVED: " + beList.get(index).host + "," + beList.get(index).pport + "," + beList.get(index).mport + "," + beList.get(index).ncores);
             beList.remove(index);
         }
-	}
+    }
 
     public static void checkforDeadFE() {
 
@@ -422,41 +393,78 @@ public class FEServer {
             feList.remove(index);
         }
     }
-	
-	public static CopyOnWriteArrayList<FEServer.FENode> feListDecoder(List<String> list) {
+
+    public static CopyOnWriteArrayList<FEServer.FENode> feListDecoder(List<String> list) {
 
         CopyOnWriteArrayList<FEServer.FENode> tempList = new CopyOnWriteArrayList<FEServer.FENode>();
-		ArrayList<String> stringList = new ArrayList<String>(list);
-		
-		for (String n : stringList){
-			String[] entryString = n.split(",");
-			FEServer.FENode entry = new FEServer.FENode();
-			entry.host = entryString[0];
-			entry.pport = Integer.parseInt(entryString[1]);
-			entry.mport = Integer.parseInt(entryString[2]);
-			entry.ncores = Integer.parseInt(entryString[3]);
+        ArrayList<String> stringList = new ArrayList<String>(list);
 
-			tempList.add(entry);
-		}
-		return tempList;
-	}
-	
-	public static CopyOnWriteArrayList<BEServer.BENode> beListDecoder(List<String> list) {
-
-        CopyOnWriteArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayList<BEServer.BENode>();
-		ArrayList<String> stringList = new ArrayList<String>(list);
-		
-		for (String n : stringList){
-			String[] entryString = n.split(",");
-			BEServer.BENode entry = new BEServer.BENode();
-			entry.host = entryString[0];
-			entry.pport = Integer.parseInt(entryString[1]);
-			entry.mport = Integer.parseInt(entryString[2]);
-			entry.ncores = Integer.parseInt(entryString[3]);
+        for (String n : stringList){
+            String[] entryString = n.split(",");
+            FEServer.FENode entry = new FEServer.FENode();
+            entry.host = entryString[0];
+            entry.pport = Integer.parseInt(entryString[1]);
+            entry.mport = Integer.parseInt(entryString[2]);
+            entry.ncores = Integer.parseInt(entryString[3]);
 
             tempList.add(entry);
+        }
+        return tempList;
+    }
+
+    public static CopyOnWriteArrayList<BEServer.BENode> beListDecoder(List<String> list) {
+
+        CopyOnWriteArrayList<BEServer.BENode> tempList = new CopyOnWriteArrayList<BEServer.BENode>();
+        ArrayList<String> stringList = new ArrayList<String>(list);
+
+        for (String n : stringList){
+            String[] entryString = n.split(",");
+            BEServer.BENode entry = new BEServer.BENode();
+            entry.host = entryString[0];
+            entry.pport = Integer.parseInt(entryString[1]);
+            entry.mport = Integer.parseInt(entryString[2]);
+            entry.ncores = Integer.parseInt(entryString[3]);
+
+            tempList.add(entry);
+        }
+        return tempList;
+    }
+
+
+
+
+
+
+
+    // NOT NEEDED
+	public static void passwordPort(FEPassword.Processor processor) {
+		try {
+			TServerTransport serverTransport = new TServerSocket(pport);
+			TServer server = new TSimpleServer(
+					new Args(serverTransport).processor(processor));
+
+			System.out.println("[FEServer] Starting FE Password service on mport= " + pport);
+
+			server.serve();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		return tempList;
 	}
+	
+    public static void managementPort(FEManagement.Processor processor) {
+        try {
+            TServerTransport serverTransport = new TServerSocket(mport);
+            TServer server = new TSimpleServer(
+                    new Args(serverTransport).processor(processor));
+
+            System.out.println("[FEServer] Started FE Management service on mport= " + mport);
+            server.serve();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }
 
