@@ -60,11 +60,12 @@ public class FEPasswordHandler implements FEPassword.Iface {
     public String hashPassword(String password, short logRounds) {
 
         String hashedPassword = null;
+		boolean requestServiced = false;
 
         if (beList.isEmpty()) {
            // throw new ServiceUnavailableException("Unable to process request, no BEs available");
         } else {
-			while(!beList.isEmpty())
+			while(!beList.isEmpty() && requestServiced == false)
 			{
 				try {
 					Random rand = new Random();
@@ -86,7 +87,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 					System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
 					transport.close();
-
+					requestServiced = true;
 				} catch (Exception x) {
 					System.out.println("[FEPasswordHandler] BE could not complete hash request, retrying with different BE...");
 					try {
@@ -96,7 +97,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 					}
 				}
 			}
-			if (beList.isEmpty()) {
+			if (beList.isEmpty() && requestServiced == false) {
 				// throw new ServiceUnavailableException("Unable to process request, no BEs available");
 			}
         }
@@ -106,11 +107,12 @@ public class FEPasswordHandler implements FEPassword.Iface {
     public boolean checkPassword(String password, String hash) {
 
         boolean result = false;
+		boolean requestServiced = false;
 		
         if (beList.isEmpty()) {
 			//throw new ServiceUnavailableException ("Unable to process request, no BEs available");
         } else {
-			while(!beList.isEmpty())
+			while(!beList.isEmpty() && requestServiced == false)
 			{
 				try {
 					Random rand = new Random();
@@ -133,8 +135,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 					System.out.println("[FEPasswordHandler] checkPassword Result= " + result);
 
 					transport.close();
-
-					return result;
+					requestServiced = true;
 				} catch (Exception x) {
 
 					System.out.println("[FEPasswordHandler] BE could not complete check request, retrying with different BE...");
@@ -145,7 +146,7 @@ public class FEPasswordHandler implements FEPassword.Iface {
 					}
 				}
 			}
-			if (beList.isEmpty()) {
+			if (beList.isEmpty() && requestServiced == false) {
 				// throw new ServiceUnavailableException("Unable to process request, no BEs available");
 			}			
         }
