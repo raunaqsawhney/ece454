@@ -69,8 +69,8 @@ public class FEPasswordHandler implements FEPassword.Iface {
                 int beServerIndex = balanceLoad();
                 System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
 
-                TSocket socket = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
-				TTransport transport = new TTransport(socket);
+                TTransport transport;
+                transport = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
                 transport.open();
 
                 TProtocol protocol = new TBinaryProtocol(transport);

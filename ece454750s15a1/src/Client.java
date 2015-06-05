@@ -24,15 +24,14 @@ public class Client {
 		}
 
         try {
-            TSocket socket = new TSocket(host, beList.get(pport);
-            TTransport transport = new TTransport(socket);
-
+            TTransport transport;
+            transport = new TSocket(host, pport);
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
             FEPassword.Client client = new FEPassword.Client(protocol);
 
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 perform(client);
             }
 
