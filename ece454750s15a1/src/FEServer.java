@@ -97,11 +97,6 @@ public class FEServer {
             // Start parsing the CLI
             startup(args);
 
-            // Create service thread handlers
-            //passwordHandler = new FEPasswordHandler(beList, perfManager);
-            //passwordProcessor = new FEPassword.Processor(passwordHandler);
-
-            
             // Create service runnables
             Runnable passwordPort = new Runnable() {
                 public void run() {
@@ -148,9 +143,9 @@ public class FEServer {
             new Thread(passwordPort).start();
             new Thread(connectToSeed).start();
 
-            executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
-            executor.scheduleAtFixedRate(checkForDeadBE, 0, 500, TimeUnit.MILLISECONDS);
-            executor.scheduleAtFixedRate(checkForDeadFE, 0, 500, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(feSyncList, 0, 100, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(checkForDeadBE, 0, 1, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(checkForDeadFE, 0, 1, TimeUnit.SECONDS);
 
             //openPasswordPort();
 
@@ -331,23 +326,6 @@ public class FEServer {
             beSyncArrayList = beListDecoder(client.getBEList());
             feSyncArrayList = feListDecoder(client.getFEList());
 
-//			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
-//			beTempSet.addAll(beList);
-//			beList = new CopyOnWriteArrayList<BEServer.BENode>(beTempSet);
-//			for (BEServer.BENode temp : beTempSet){
-//				numBE++;
-//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
-//			}
-//
-//
-//			HashSet<FEServer.FENode> feTempSet = new HashSet<FEServer.FENode>(feSyncArrayList);
-//			feTempSet.addAll(feList);
-//			feList = new CopyOnWriteArrayList<FEServer.FENode>(feTempSet);
-//			for (FEServer.FENode temp : feTempSet){
-//				numFE++;
-//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
-//			}
-
             for (FEServer.FENode feSyncNode : feSyncArrayList) {
                 if (!feList.contains(feSyncNode)) {
                     feList.add(feSyncNode);
@@ -361,19 +339,8 @@ public class FEServer {
 
             int numBE = beList.size();
             int numFE = feList.size();
-			
-            /*int numBE = 0;
-            int numFE = 0;
-            for (String beSyncListItem : beSyncList) {
-                numBE++;
-                System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
-            }   
-            System.out.println("[FEServer]");
-            for (String feSyncListItem : feSyncList) {
-                numFE++;
-                System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
-            }*/
-            System.out.println("[FEServer] numBE: " + numBE + "---- numFE: " + numFE);
+
+            System.out.println("[FEServer] numBE: " + numBE + " ---- numFE: " + numFE);
 
             transport.close();
         } catch (Exception x) {
