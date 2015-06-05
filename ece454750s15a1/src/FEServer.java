@@ -311,8 +311,6 @@ public class FEServer {
             beSyncArrayList = beListDecoder(client.getBEList());
             feSyncArrayList = feListDecoder(client.getFEList());
 
-            beSyncArrayList = beListDecoder(beSyncList);
-            feSyncArrayList = feListDecoder(feSyncList);
 			int numBE = 0;
             int numFE = 0;
 			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
