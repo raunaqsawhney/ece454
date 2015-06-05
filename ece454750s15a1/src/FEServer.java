@@ -218,7 +218,7 @@ public class FEServer {
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
-                result = client.joinCluster(host, pport, mport, ncores, 0)
+                result = client.joinCluster(host, pport, mport, ncores, 0);
 
                 // Join cluster with node type BE, 0 = FE, 1 = BE
                 if (!result) {
@@ -270,7 +270,7 @@ public class FEServer {
 
     public static void openManagementPort() {
         try {
-            managementHandler = new FEManagementHandler(beList,perfManager);
+            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
             managementProcessor = new FEManagement.Processor(managementHandler);
 
             TNonblockingServerSocket socket =  new TNonblockingServerSocket(mport);
