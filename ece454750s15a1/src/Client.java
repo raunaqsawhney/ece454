@@ -35,6 +35,9 @@ public class Client {
                 perform(client);
             }
 
+            client = FEManagement.Client(protocol);
+            perform_man(client);
+
             transport.close();
         } catch (TException x) {
             x.printStackTrace();
