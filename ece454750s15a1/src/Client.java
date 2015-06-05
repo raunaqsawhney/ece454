@@ -31,14 +31,14 @@ public class Client {
             passwordTransport.open();
 
             TTransport managementTransport;
-            managementTransport = new TSocket(host, mport);
+            managementTransport = new TSocket("eceubuntu", 31175);
             managementTransport.open();
 
             TProtocol passwordProtocol = new TBinaryProtocol(passwordTransport);
             FEPassword.Client passwordClient = new FEPassword.Client(passwordProtocol);
 
             TProtocol managementProtocol = new TBinaryProtocol(managementTransport);
-            FEManagement.Client managementClient = new FEManagement.Client(managementProtocol);
+            BEManagement.Client managementClient = new BEManagement.Client(managementProtocol);
 
             performPassword(passwordClient);
             performManagementGroup(managementClient);
@@ -62,19 +62,19 @@ public class Client {
         }
     }
 
-    public static void performManagementGroup(FEManagement.Client managementClient) throws TException {
+    public static void performManagementGroup(BEManagement.Client managementClient) throws TException {
 
         List<String> groupMembers = managementClient.getGroupMembers();
         for (String groupMember : groupMembers) {
             System.out.println(groupMember);
         }
-    }
 
-    private static void performManagement(FEManagement.Client managementClient) {
+    }
+    private static void performManagement(BEManagement.Client managementClient) {
         try {
             PerfCounters perfCounter = new PerfCounters();
             perfCounter = managementClient.getPerfCounters();
-            System.out.println("[Client] NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
+            System.out.println("[Client] BE NUM SECONDS UP: " + perfCounter.numSecondsUp + " REQ REC: " + perfCounter.numRequestsReceived + " REQ COM: " + perfCounter.numRequestsCompleted);
         } catch (Exception x) {
             x.printStackTrace();
         }

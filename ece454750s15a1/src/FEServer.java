@@ -141,6 +141,8 @@ public class FEServer {
                 }
             };
 
+            serviceUpTime = System.currentTimeMillis();
+            
             // Spawn service threads
             new Thread(managementPort).start();
             new Thread(passwordPort).start();
@@ -149,8 +151,6 @@ public class FEServer {
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
             executor.scheduleAtFixedRate(checkForDeadBE, 0, 500, TimeUnit.MILLISECONDS);
             executor.scheduleAtFixedRate(checkForDeadFE, 0, 500, TimeUnit.MILLISECONDS);
-
-            serviceUpTime = System.currentTimeMillis();
 
             //openPasswordPort();
 
@@ -265,7 +265,7 @@ public class FEServer {
 
 			TServerTransport serverTransport = new TServerSocket(pport);
 			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(2*ncores);
+			args.maxWorkerThreads(4*ncores);
 			args.minWorkerThreads(ncores);
 			args.processor(passwordProcessor);
 			TServer server = new TThreadPoolServer(args);
@@ -286,7 +286,7 @@ public class FEServer {
 
 			TServerTransport serverTransport = new TServerSocket(mport);
 			TThreadPoolServer.Args args = new TThreadPoolServer.Args(serverTransport);
-			args.maxWorkerThreads(2*ncores);
+			args.maxWorkerThreads(4*ncores);
 			args.minWorkerThreads(ncores);
 			args.processor(managementProcessor);
 			TServer server = new TThreadPoolServer(args);
