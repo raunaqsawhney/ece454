@@ -196,49 +196,48 @@ public class FEServer {
 		}
 	}
 
-
-    public static void connectToSeed() {
-        TTransport transport;
+	public static void connectToSeed() {
         int retryCount = 0;
+        boolean result = false;
 
         for (int i = 0; i < seedList.size(); i++) {
             try {
+
+                // THOMAS: I changed this so that if a FESeed tries to join itself, it just skips to the next seed
+                // in the list.
+
+                if (seedList.get(i).host == host && seedList.get(i).mport == mport)
+                    continue;
+
                 System.out.println("[FEServer] (" + host + "," + pport + "," + mport + "," + ncores + ")");
                 System.out.println("[FEServer] Known seeds:");
                 for (FEServer.FESeed seed : seedList){
-                    System.out.println("FEServer] (" + seed.host + ":" + seed.mport + ")");
+                    System.out.println("[FEServer] (" + seed.host + ":" + seed.mport + ")");
                 }
+                System.out.println("[FEServer] ----------------------");
 
-                System.out.println("[FEServer] Seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
-                transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
+                System.out.println("[FEServer] Connecting to seed(" + i + ") " + seedList.get(i).host + "," + seedList.get(i).mport);
+                TTransport transport = new TSocket(seedList.get(i).host, seedList.get(i).mport);
                 transport.open();
                 System.out.println("[FEServer] FESeed connection established");
 
                 TProtocol protocol = new TBinaryProtocol(transport);
                 FEManagement.Client client = new FEManagement.Client(protocol);
 
+                System.out.println("JOINING CLUSTER....");
+                result = client.joinCluster(host, pport, mport, ncores, 0);
+                System.out.println("JOINED CLUSTER....");
+
                 // Join cluster with node type BE, 0 = FE, 1 = BE
-                if (!client.joinCluster(host, pport, mport, ncores, 0)) {
-                    System.out.println("[FEServer] FE Unable to join cluster");
+                if (!result) {
+                    System.out.println("[FEServer] FE unable to join cluster");
                 } else {
-                    System.out.println("[FEServer] Joined Cluster");
+                    System.out.println("[FEServer] Joined cluster");
                 }
 
                 transport.close();
-
-            } catch (Exception x){
-                if (retryCount < 3) {
-                    System.out.println("[FEServer] Waiting on FE Seed to connect (" + retryCount + ")...");
-                    try {
-                        retryCount++;
-                        i--;
-                        Thread.sleep(1000);
-                    } catch (Exception y) {
-                        y.printStackTrace();
-                    }
-                }else{
-                    retryCount = 0;
-                }
+            } catch (Exception x) {
+                x.printStackTrace();
             }
         }
     }
