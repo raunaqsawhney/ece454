@@ -147,8 +147,8 @@ public class FEServer {
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
-            executor.scheduleAtFixedRate(checkForDeadBE, 0, 1, TimeUnit.SECONDS);
-            executor.scheduleAtFixedRate(checkForDeadFE, 0, 1, TimeUnit.SECONDS);
+            executor.scheduleAtFixedRate(checkForDeadBE, 0, 500, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(checkForDeadFE, 0, 500, TimeUnit.MILLISECONDS);
 
             serviceUpTime = System.currentTimeMillis();
 
