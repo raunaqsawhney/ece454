@@ -311,24 +311,36 @@ public class FEServer {
             beSyncArrayList = beListDecoder(client.getBEList());
             feSyncArrayList = feListDecoder(client.getFEList());
 
-			int numBE = 0;
-            int numFE = 0;
-			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
-			beTempSet.addAll(beList);
-			beList = new CopyOnWriteArrayList<BEServer.BENode>(beTempSet);
-			for (BEServer.BENode temp : beTempSet){
-				numBE++;
-				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
-			}
-			
-			
-			HashSet<FEServer.FENode> feTempSet = new HashSet<FEServer.FENode>(feSyncArrayList);
-			feTempSet.addAll(feList);
-			feList = new CopyOnWriteArrayList<FEServer.FENode>(feTempSet);
-			for (FEServer.FENode temp : feTempSet){
-				numFE++;
-				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
-			}
+//			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
+//			beTempSet.addAll(beList);
+//			beList = new CopyOnWriteArrayList<BEServer.BENode>(beTempSet);
+//			for (BEServer.BENode temp : beTempSet){
+//				numBE++;
+//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+//			}
+//
+//
+//			HashSet<FEServer.FENode> feTempSet = new HashSet<FEServer.FENode>(feSyncArrayList);
+//			feTempSet.addAll(feList);
+//			feList = new CopyOnWriteArrayList<FEServer.FENode>(feTempSet);
+//			for (FEServer.FENode temp : feTempSet){
+//				numFE++;
+//				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+//			}
+
+            for (FEServer.FENode feSyncNode : feSyncArrayList) {
+                if (!feList.contains(feSyncNode)) {
+                    feList.add(feSyncNode);
+                }
+            }
+            for (BEServer.BENode beSyncNode : beSyncArrayList) {
+                if (!beList.contains(beSyncNode)) {
+                    beList.add(beSyncNode);
+                }
+            }
+
+            int numBE = beList.size();
+            int numFE = feList.size();
 			
             /*int numBE = 0;
             int numFE = 0;
