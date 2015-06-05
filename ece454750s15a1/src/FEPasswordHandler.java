@@ -64,36 +64,41 @@ public class FEPasswordHandler implements FEPassword.Iface {
         if (beList.isEmpty()) {
            // throw new ServiceUnavailableException("Unable to process request, no BEs available");
         } else {
-            try {
-                Random rand = new Random();
-                int beServerIndex = balanceLoad();
-                System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
+			while(!beList.isEmpty())
+			{
+				try {
+					Random rand = new Random();
+					int beServerIndex = balanceLoad();
+					System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
 
-                TTransport transport;
-                transport = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
-                transport.open();
+					TTransport transport;
+					transport = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
+					transport.open();
 
-                TProtocol protocol = new TBinaryProtocol(transport);
-                BEPassword.Client client = new BEPassword.Client(protocol);
+					TProtocol protocol = new TBinaryProtocol(transport);
+					BEPassword.Client client = new BEPassword.Client(protocol);
 
-                System.out.println("[FEPasswordHandler] Password to HASH = " + password);
+					System.out.println("[FEPasswordHandler] Password to HASH = " + password);
 
-                perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
-                hashedPassword = client.hashPassword(password, logRounds);
-                perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
+					perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
+					hashedPassword = client.hashPassword(password, logRounds);
+					perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
 
-                System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
-                transport.close();
+					System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
+					transport.close();
 
-            } catch (Exception x) {
-
-                System.out.println("[FEPasswordHandler] BE could not complete hash request, retrying with different BE...");
-                try {
-                    Thread.sleep(500);
-                } catch (Exception y) {
-                    y.printStackTrace();
-                }
-            }
+				} catch (Exception x) {
+					System.out.println("[FEPasswordHandler] BE could not complete hash request, retrying with different BE...");
+					try {
+						Thread.sleep(500);
+					} catch (Exception y) {
+						y.printStackTrace();
+					}
+				}
+			}
+			if (beList.isEmpty()) {
+				// throw new ServiceUnavailableException("Unable to process request, no BEs available");
+			}
         }
         return hashedPassword;
     }
@@ -105,38 +110,44 @@ public class FEPasswordHandler implements FEPassword.Iface {
         if (beList.isEmpty()) {
 			//throw new ServiceUnavailableException ("Unable to process request, no BEs available");
         } else {
-            try {
-                Random rand = new Random();
-                int beServerIndex = balanceLoad();
-                System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
+			while(!beList.isEmpty())
+			{
+				try {
+					Random rand = new Random();
+					int beServerIndex = balanceLoad();
+					System.out.println("[FEPasswordHandler] beServerIndex = " + beServerIndex);
 
-                TTransport transport;
-                transport = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
-                transport.open();
+					TTransport transport;
+					transport = new TSocket(beList.get(beServerIndex).host, beList.get(beServerIndex).pport);
+					transport.open();
 
-                TProtocol protocol = new TBinaryProtocol(transport);
-                BEPassword.Client client = new BEPassword.Client(protocol);
+					TProtocol protocol = new TBinaryProtocol(transport);
+					BEPassword.Client client = new BEPassword.Client(protocol);
 
-                System.out.println("[FEPasswordHandler] Password to Check= " + password);
+					System.out.println("[FEPasswordHandler] Password to Check= " + password);
 
-                perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
-                result = client.checkPassword(password, hash);
-                perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
+					perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
+					result = client.checkPassword(password, hash);
+					perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
 
-                System.out.println("[FEPasswordHandler] checkPassword Result= " + result);
+					System.out.println("[FEPasswordHandler] checkPassword Result= " + result);
 
-                transport.close();
+					transport.close();
 
-                return result;
-            } catch (Exception x) {
+					return result;
+				} catch (Exception x) {
 
-                System.out.println("[FEPasswordHandler] BE could not complete check request, retrying with different BE...");
-                try {
-                    Thread.sleep(500);
-                } catch (Exception y) {
-                    y.printStackTrace();
-                }
-            }
+					System.out.println("[FEPasswordHandler] BE could not complete check request, retrying with different BE...");
+					try {
+						Thread.sleep(500);
+					} catch (Exception y) {
+						y.printStackTrace();
+					}
+				}
+			}
+			if (beList.isEmpty()) {
+				// throw new ServiceUnavailableException("Unable to process request, no BEs available");
+			}			
         }
         return result;
     }
