@@ -282,7 +282,7 @@ public class FEServer {
 
     public static void openManagementPort() {
         try {
-            managementHandler = new FEManagementHandler(beList,perfManager);
+            managementHandler = new FEManagementHandler(beList,feList, perfManager, serviceUpTime);
             managementProcessor = new FEManagement.Processor(managementHandler);
 
             TNonblockingServerSocket socket =  new TNonblockingServerSocket(mport);

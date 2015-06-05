@@ -34,9 +34,8 @@ public class Client {
             for (int i = 0; i < 10; i++) {
                 perform(client);
             }
-
-            client = FEManagement.Client(protocol);
-            perform_man(client);
+            FEManagement.Client client_man = new FEManagement.Client(protocol);
+            perform_man(client_man);
 
             transport.close();
         } catch (TException x) {
