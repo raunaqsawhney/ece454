@@ -98,25 +98,37 @@ public class FEServer {
 			startup(args);
 
 			// Create service thread handlers
-			//passwordHandler = new FEPasswordHandler(beList, perfManager);
-			//passwordProcessor = new FEPassword.Processor(passwordHandler);
+			passwordHandler = new FEPasswordHandler(beList, perfManager);
+			passwordProcessor = new FEPassword.Processor(passwordHandler);
 
-            //managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
-			//managementProcessor = new FEManagement.Processor(managementHandler);
+            managementHandler = new FEManagementHandler(beList, feList, perfManager, serviceUpTime);
+			managementProcessor = new FEManagement.Processor(managementHandler);
 
 			// Create service runnables
+//
+//            Runnable openPasswordPort = new Runnable() {
+//                public void run() {
+//                    openPasswordPort();
+//				}
+//			};
+//
+//			final Runnable openManagementPort = new Runnable() {
+//				public void run() {
+//                    openManagementPort();
+//				}
+//			};
 
-            Runnable openPasswordPort = new Runnable() {
+            final Runnabe passwordPort = new Runnable() {
                 public void run() {
-                    openPasswordPort();
-				}
-			};
+                    passwordPort();
+                }
+            };
 
-			final Runnable openManagementPort = new Runnable() {
-				public void run() {
-                    openManagementPort();
-				}
-			};
+            final Runnable managementPort = new Runnable() {
+                public void run() {
+                    managementPort();
+                }
+            };
 
             final Runnable connectToSeed = new Runnable() {
                 public void run() {
@@ -143,8 +155,8 @@ public class FEServer {
             };
 
 			// Spawn service threads
-			new Thread(openManagementPort).start();
-			new Thread(openPasswordPort).start();
+			new Thread(managementPort).start();
+			new Thread(passwordPort).start();
             new Thread(connectToSeed).start();
 
             executor.scheduleAtFixedRate(feSyncList, 0, 1, TimeUnit.SECONDS);
