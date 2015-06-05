@@ -40,6 +40,31 @@ public class FEServer {
 		public int pport;
 		public int mport;
 		public int ncores;
+		
+		@Override
+		public int hashCode(){
+			final int prime = 29;
+			int result = 1;
+			result = prime  * result + host.hashCode();
+			result = prime * result + pport;
+			result = prime * result + mport;
+			result = prime * result + ncores;
+			return result;
+		}
+		
+		@Override
+		public boolean equals(Object obj){
+			if (this == obj){return true;}
+			if (obj == null){return false;}
+			if (getClass() != obj.getClass()){return false;}
+			FEServer.FENode other = (FEServer.FENode) obj;
+			if (!host.equals(other.host)){return false;}
+			if (pport != other.pport){return false;}
+			if (mport != other.mport){return false;}
+			if (ncores != other.ncores){return false;}	
+			return true;
+		}
+	
     }
     public static boolean connectToAllKnownSeeds = false;
 
@@ -286,9 +311,29 @@ public class FEServer {
             beSyncArrayList = beListDecoder(client.getBEList());
             feSyncArrayList = feListDecoder(client.getFEList());
 
-            int numBE = 0;
+            beSyncArrayList = beListDecoder(beSyncList);
+            feSyncArrayList = feListDecoder(feSyncList);
+			int numBE = 0;
             int numFE = 0;
-
+			HashSet<BEServer.BENode> beTempSet = new HashSet<BEServer.BENode>(beSyncArrayList);
+			beTempSet.addAll(beList);
+			beList = new CopyOnWriteArrayList<BEServer.BENode>(beTempSet);
+			for (BEServer.BENode temp : beTempSet){
+				numBE++;
+				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+			}
+			
+			
+			HashSet<FEServer.FENode> feTempSet = new HashSet<FEServer.FENode>(feSyncArrayList);
+			feTempSet.addAll(feList);
+			feList = new CopyOnWriteArrayList<FEServer.FENode>(feTempSet);
+			for (FEServer.FENode temp : feTempSet){
+				numFE++;
+				System.out.println("[FEServer] FEList " + temp.host + ":" + temp.pport + ":" + temp.mport);
+			}
+			
+            /*int numBE = 0;
+            int numFE = 0;
             for (String beSyncListItem : beSyncList) {
                 numBE++;
                 System.out.println("[FEServer] BESyncList BENode: (" + beSyncListItem + ")");
@@ -297,8 +342,8 @@ public class FEServer {
             for (String feSyncListItem : feSyncList) {
                 numFE++;
                 System.out.println("[FEServer] FESyncList FENode: (" + feSyncListItem + ")");
-            }
-            System.out.println("[FEServer] numBE: " + numBE + " ---- numFE: " + numFE);
+            }*/
+            System.out.println("[FEServer] numBE: " + numBE + "---- numFE: " + numFE);
 
             transport.close();
         } catch (Exception x) {
