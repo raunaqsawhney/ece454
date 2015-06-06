@@ -64,10 +64,11 @@ public class FEPasswordHandler implements FEPassword.Iface {
         String hashedPassword = null;
 		boolean requestServiced = false;
 
+        perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
         if (beList.isEmpty()) {
-           // throw new ServiceUnavailableException("Unable to process request, no BEs available");
+          // throw new ServiceUnavailableException("Unable to process request, no BEs available");
         } else {
-			while(!beList.isEmpty() && requestServiced == false)
+			while(!beList.isEmpty() && requestServiced == false) 
 			{
 				try {
 					Random rand = new Random();
@@ -83,13 +84,12 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 					System.out.println("[FEPasswordHandler] Password to HASH = " + password);
 
-					perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
 					hashedPassword = client.hashPassword(password, logRounds);
 					perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
-
-					System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
-					transport.close();
 					requestServiced = true;
+					
+                    System.out.println("[FEPasswordHandler] hashedPassword = " + hashedPassword);
+					transport.close();
 				} catch (Exception x) {
 					System.out.println("[FEPasswordHandler] BE could not complete hash request, retrying with different BE...");
 					try {
@@ -111,8 +111,9 @@ public class FEPasswordHandler implements FEPassword.Iface {
         boolean result = false;
 		boolean requestServiced = false;
 		
+        perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
         if (beList.isEmpty()) {
-			//throw new ServiceUnavailableException ("Unable to process request, no BEs available");
+		//	throw new ServiceUnavailableException ("Unable to process request, no BEs available");
         } else {
 			while(!beList.isEmpty() && requestServiced == false)
 			{
@@ -130,14 +131,12 @@ public class FEPasswordHandler implements FEPassword.Iface {
 
 					System.out.println("[FEPasswordHandler] Password to Check= " + password);
 
-					perfCounter.numRequestsReceived = perfCounter.numRequestsReceived += 1;
 					result = client.checkPassword(password, hash);
 					perfCounter.numRequestsCompleted = perfCounter.numRequestsCompleted += 1;
-
-					System.out.println("[FEPasswordHandler] checkPassword Result= " + result);
-
-					transport.close();
 					requestServiced = true;
+					
+                    System.out.println("[FEPasswordHandler] checkPassword Result= " + result);
+					transport.close();
 				} catch (Exception x) {
 
 					System.out.println("[FEPasswordHandler] BE could not complete check request, retrying with different BE...");
