@@ -50,14 +50,18 @@ public class TriangleCountImpl {
 		Iterator vertexList = temp_map_entry.getValue().iterator();
 		while(vertexList.hasNext()){
 			Object temp_vertex = vertexList.next();
-			if (!vertex.containsKey(temp_vertex)){
+			//System.out.println(temp_vertex);
+			//System.out.println(vertex.get(temp_vertex));
+			if (!vertex.containsKey(temp_vertex) || vertex.get(temp_vertex).equals(null)){
 				vertexList.remove(); 
+				//System.out.println("Deleted");
 			}
 		}
 		
 		if (temp_map_entry.getValue().size() > 1){
 			vertex.put(temp_map_entry.getKey(),temp_map_entry.getValue());
 		}else{
+			vertex.get(temp_map_entry.getValue().get(0)).remove(temp_map_entry.getKey());
 			entryList.remove();
 		}
 	}
@@ -70,6 +74,29 @@ public class TriangleCountImpl {
 		System.out.println();
 	}
 	
+	for (Map.Entry<Integer, ArrayList<Integer>> x : vertex.entrySet()){
+		int num_of_edges = x.getValue().size();
+		int adj_vertex_1 = -1;
+		int adj_vertex_2 = -1;
+		
+		int vertex_num = x.getKey();
+		
+		for (int index_1 = 0; index_1 < num_of_edges; index_1++){
+			adj_vertex_1 = x.getValue().get(index_1);
+			for (int index_2 = index_1 + 1; index_2 < num_of_edges; index_2++){
+				adj_vertex_2 = x.getValue().get(index_2);
+				//System.out.println(adj_vertex_1 + ":" + adj_vertex_2 + ":" + vertex_num);
+				if (vertex.get(adj_vertex_1).contains(vertex_num) && vertex.get(adj_vertex_2).contains(vertex_num)){
+					ret.add(getTriangle(vertex_num, adj_vertex_1, adj_vertex_2));
+				}
+			}
+			
+			for (int i = 0; i < num_of_edges; i++){
+				// TODO Remove edges from other vertex lists to stop duplicates
+			}
+		}
+	}
+
 	// For each vertex in map
 		// Use two indexes iterating through adjacencyList of the vertex
 		// Check to see that the adjacency lists of the vertexes pointed by indexes contains the other
@@ -106,6 +133,22 @@ public class TriangleCountImpl {
 	return ret;
     }
 
+	public Triangle getTriangle(int v1,int v2,int v3){	
+		int x = -1,y = -1,z = -1;
+		if (v1 < v2 && v1 < v3){
+			x = v1;
+			if (v2 < v3){y = v2;z = v3;}else{y = v3;z = v2;}
+		}else if(v2 < v1 && v2 < v3){
+			x = v2;
+			if (v1 < v3){y = v1;z = v3;}else{y = v3;z = v1;}
+		}else if(v3 < v1 && v3 < v2){
+			x = v3;
+			if (v1 < v2){y = v1;z = v2;}else{y = v2;z = v1;}
+		}
+		return new Triangle(x,y,z);
+	}
+	
+	
     public ArrayList<ArrayList<Integer>> getAdjacencyList(byte[] data) throws IOException {
 	InputStream istream = new ByteArrayInputStream(data);
 	BufferedReader br = new BufferedReader(new InputStreamReader(istream));
