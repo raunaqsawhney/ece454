@@ -11,6 +11,7 @@ package ece454750s15a2;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class TriangleCountImpl {
     private byte[] input;
@@ -29,9 +30,8 @@ public class TriangleCountImpl {
     }
 
     public List<Triangle> enumerateTriangles() throws IOException {
-	// this code is single-threaded and ignores numCores
 
-	HashMap<Integer, ArrayList<Integer>> vertex = new HashMap<Integer, ArrayList<Integer>>();
+	ConcurrentHashMap<Integer, ArrayList<Integer>> vertex = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
 	ArrayList<ArrayList<Integer>> adjacencyList = getAdjacencyList(input);
 	ArrayList<Triangle> ret = new ArrayList<Triangle>();
 
@@ -41,8 +41,7 @@ public class TriangleCountImpl {
 			vertex.put(i,adjacencyList.get(i));
 		}
 	}
-	
-	//for (Map.Entry<Integer, ArrayList<Integer>> x : vertex.entrySet()){
+
 	Iterator entryList = vertex.entrySet().iterator();
 	while (entryList.hasNext()){
 		Object temp_object = entryList.next();
@@ -50,29 +49,38 @@ public class TriangleCountImpl {
 		Iterator vertexList = temp_map_entry.getValue().iterator();
 		while(vertexList.hasNext()){
 			Object temp_vertex = vertexList.next();
-			//System.out.println(temp_vertex);
-			//System.out.println(vertex.get(temp_vertex));
-			if (!vertex.containsKey(temp_vertex) || vertex.get(temp_vertex).equals(null)){
+			if (!vertex.containsKey(temp_vertex) || vertex.get(temp_vertex) == null){
 				vertexList.remove(); 
-				//System.out.println("Deleted");
 			}
 		}
 		
 		if (temp_map_entry.getValue().size() > 1){
 			vertex.put(temp_map_entry.getKey(),temp_map_entry.getValue());
 		}else{
-			vertex.get(temp_map_entry.getValue().get(0)).remove(temp_map_entry.getKey());
+			if (temp_map_entry.getValue().size() == 1){
+				int last_edge = temp_map_entry.getValue().get(0);
+				vertex.get(last_edge).remove(temp_map_entry.getKey());
+				if (vertex.get(last_edge).size() == 0){
+					vertex.remove(last_edge);
+				}else if (vertex.get(last_edge).size() < 2 && vertex.get(vertex.get(last_edge).get(0)) != null){
+					int temp_index = vertex.get(vertex.get(last_edge).get(0)).indexOf(last_edge);
+					vertex.get(vertex.get(last_edge).get(0)).remove(temp_index);
+					vertex.remove(last_edge);
+				} 
+			}
+			
 			entryList.remove();
 		}
 	}
 	
+	/*
 	for (Map.Entry<Integer, ArrayList<Integer>> x : vertex.entrySet()){
 		System.out.print(x.getKey() + ":");
 		for (int i : x.getValue()){ 
 			System.out.print(i + " ");
 		}
 		System.out.println();
-	}
+	}*/
 	
 	for (Map.Entry<Integer, ArrayList<Integer>> x : vertex.entrySet()){
 		int num_of_edges = x.getValue().size();
@@ -85,8 +93,7 @@ public class TriangleCountImpl {
 			adj_vertex_1 = x.getValue().get(index_1);
 			for (int index_2 = index_1 + 1; index_2 < num_of_edges; index_2++){
 				adj_vertex_2 = x.getValue().get(index_2);
-				//System.out.println(adj_vertex_1 + ":" + adj_vertex_2 + ":" + vertex_num);
-				if (vertex.get(adj_vertex_1).contains(vertex_num) && vertex.get(adj_vertex_2).contains(vertex_num)){
+				if (vertex.get(adj_vertex_1).contains(adj_vertex_2) && vertex.get(adj_vertex_2).contains(adj_vertex_1)){
 					ret.add(getTriangle(vertex_num, adj_vertex_1, adj_vertex_2));
 				}
 			}
