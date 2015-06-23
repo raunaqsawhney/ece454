@@ -86,6 +86,7 @@ public class TriangleCountImpl {
 		int num_of_edges = x.getValue().size();
 		int adj_vertex_1 = -1;
 		int adj_vertex_2 = -1;
+		int temp_index = -1;
 		
 		int vertex_num = x.getKey();
 		
@@ -97,10 +98,13 @@ public class TriangleCountImpl {
 					ret.add(getTriangle(vertex_num, adj_vertex_1, adj_vertex_2));
 				}
 			}
-			
-			for (int i = 0; i < num_of_edges; i++){
-				// TODO Remove edges from other vertex lists to stop duplicates
-			}
+		}
+		
+					
+		for (int i = 0; i < num_of_edges; i++){
+			temp_index = x.getValue().get(i);
+			int temp = vertex.get(temp_index).indexOf(vertex_num);
+			vertex.get(temp_index).remove(temp);
 		}
 	}
 
