@@ -64,14 +64,14 @@ public class TriangleCountImpl {
 						}
 					}
 				}
-				 adjacencyList.get(vertex_A).remove(vertex_index);
+				// adjacencyList.get(vertex_A).remove(vertex_index);
 			}
-			/*
+			
 			Iterator<Integer> removalIterator = vertex.iterator();
 			while(removalIterator.hasNext()){
 				int temp = removalIterator.next();
-				adjacencyList.get(temp).remove(vertex_index); 
-			}*/
+				adjacencyList.get(temp).remove(vertex_index);
+			}
 		}else if(numEdges == 1){
 			Iterator<Integer> deleteIterator = vertex.iterator();
 			int edgeToDelete = deleteIterator.next();
