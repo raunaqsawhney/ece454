@@ -48,14 +48,11 @@ public class TriangleCountImpl {
 		numEdges = vertex.size();
 		if (numEdges > 1){
 			Iterator<Integer> iteratorA = vertex.iterator();
-			int loop_number = 0;
 			while(iteratorA.hasNext()){
-				loop_number++;
 				vertex_A = iteratorA.next();
 				numEdges_A = adjacencyList.get(vertex_A).size();
 				if (numEdges_A > 1){
 					Iterator<Integer> iteratorB = vertex.iterator();
-					for (int i = 0; i < loop_number; i++){iteratorB.next();}
 					while (iteratorB.hasNext()){
 						vertex_B = iteratorB.next();
 						numEdges_B = adjacencyList.get(vertex_B).size();
@@ -65,13 +62,8 @@ public class TriangleCountImpl {
 					}
 				}
 				 adjacencyList.get(vertex_A).remove(vertex_index);
+				 iteratorA.remove();
 			}
-			/*
-			Iterator<Integer> removalIterator = vertex.iterator();
-			while(removalIterator.hasNext()){
-				int temp = removalIterator.next();
-				adjacencyList.get(temp).remove(vertex_index); 
-			}*/
 		}else if(numEdges == 1){
 			Iterator<Integer> deleteIterator = vertex.iterator();
 			int edgeToDelete = deleteIterator.next();
