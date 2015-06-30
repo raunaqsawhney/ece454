@@ -28,59 +28,116 @@ public class TriangleCountImpl {
 	ret.add("t39chan");
 	return ret;
     }
-
-    public List<Triangle> enumerateTriangles() throws IOException {
-
-	//ConcurrentHashMap<Integer, ArrayList<Integer>> vertex = new ConcurrentHashMap<Integer, ArrayList<Integer>>();
-	ArrayList<HashSet<Integer>> adjacencyList = getAdjacencyList(input);
-	ArrayList<Triangle> ret = new ArrayList<Triangle>();
 	
-	/* Modified Sample Code */
-	int numEdges = 0;
-	int numEdges_A = 0;
-	int numEdges_B = 0;
-	int vertex_A = 0;
-	int vertex_B = 0;
-	int numVertices = adjacencyList.size();
-	
-	for (int vertex_index = 0; vertex_index < numVertices; vertex_index++) {
-		HashSet<Integer> vertex = adjacencyList.get(vertex_index);
-		numEdges = vertex.size();
-		if (numEdges > 1){
-			Iterator<Integer> iteratorA = vertex.iterator();
-			while(iteratorA.hasNext()){
-				vertex_A = iteratorA.next();
-				numEdges_A = adjacencyList.get(vertex_A).size();
-				if (numEdges_A > 1){
-					Iterator<Integer> iteratorB = vertex.iterator();
-					while (iteratorB.hasNext()){
-						vertex_B = iteratorB.next();
-						numEdges_B = adjacencyList.get(vertex_B).size();
-						if (numEdges_B > 1 && adjacencyList.get(vertex_A).contains(vertex_B) && adjacencyList.get(vertex_B).contains(vertex_A)){
-							ret.add(getTriangle(vertex_index, vertex_A, vertex_B));
+	public class EnumerateTrianglesParrallel implements Runnable{
+		private int startingVertex;
+		private ArrayList<HashSet<Integer>> adjacencyList;
+		//private List<Triangle> syncList;
+		private ConcurrentMap<String,Triangle> syncMap;
+		
+		public EnumerateTrianglesParrallel(int startingVertex, ArrayList<HashSet<Integer>> adjacencyList, ConcurrentHashMap<String,Triangle> syncMap){
+			this.startingVertex = startingVertex;
+			this.adjacencyList = adjacencyList;
+			this.syncMap = syncMap;
+			//this.syncList = syncList;
+		}
+		
+		public void run(){
+			int numEdges = 0;
+			int numEdges_A = 0;
+			int numEdges_B = 0;
+			int vertex_A = 0;
+			int vertex_B = 0;
+			int numVertices = adjacencyList.size();
+			
+			for (int vertex_index = startingVertex; vertex_index < numVertices; vertex_index += numCores) {
+				HashSet<Integer> vertex = adjacencyList.get(vertex_index);
+				numEdges = vertex.size();
+				if (numEdges > 1){
+					
+						Iterator<Integer> iteratorA = vertex.iterator();
+						while(iteratorA.hasNext()){
+							vertex_A = iteratorA.next();
+							numEdges_A = adjacencyList.get(vertex_A).size();
+							if (numEdges_A > 1){
+								Iterator<Integer> iteratorB = vertex.iterator();
+								iteratorB.next();
+								while (iteratorB.hasNext()){
+									vertex_B = iteratorB.next();
+									numEdges_B = adjacencyList.get(vertex_B).size();
+									if (numEdges_B > 1 && adjacencyList.get(vertex_A).contains(vertex_B) && adjacencyList.get(vertex_B).contains(vertex_A)){
+										syncMap.putIfAbsent(getTriangleString(vertex_index, vertex_A, vertex_B),getTriangle(vertex_index, vertex_A, vertex_B)); 
+									}
+								}
+							}
+							 iteratorA.remove();
 						}
-					}
 				}
-				 adjacencyList.get(vertex_A).remove(vertex_index);
-				 iteratorA.remove();
-			}
-		}else if(numEdges == 1){
-			Iterator<Integer> deleteIterator = vertex.iterator();
-			int edgeToDelete = deleteIterator.next();
-			int temp_index = edgeToDelete;
-			adjacencyList.get(temp_index).remove(vertex_index);
-			while (adjacencyList.get(edgeToDelete).size() == 1){
-				deleteIterator = adjacencyList.get(edgeToDelete).iterator();
-				temp_index = deleteIterator.next();
-				adjacencyList.get(temp_index).remove(edgeToDelete);
-				edgeToDelete = temp_index;
+				vertex.clear();
 			}
 		}
-		vertex.clear();
+	}
+	
+    public List<Triangle> enumerateTriangles() throws IOException {
+	ArrayList<HashSet<Integer>> adjacencyList = getAdjacencyList(input);
+	ArrayList<Triangle> ret = new ArrayList<Triangle>();
+
+	if (numCores == 1){
+		int numEdges = 0;
+		int numEdges_A = 0;
+		int numEdges_B = 0;
+		int vertex_A = 0;
+		int vertex_B = 0;
+		int numVertices = adjacencyList.size();
+		
+		for (int vertex_index = 0; vertex_index < numVertices; vertex_index++) {
+			HashSet<Integer> vertex = adjacencyList.get(vertex_index);
+			numEdges = vertex.size();
+			if (numEdges > 1){
+				Iterator<Integer> iteratorA = vertex.iterator();
+				while(iteratorA.hasNext()){
+					vertex_A = iteratorA.next();
+					numEdges_A = adjacencyList.get(vertex_A).size();
+					if (numEdges_A > 1 && vertex_index < vertex_A){
+						Iterator<Integer> iteratorB = vertex.iterator();
+						iteratorB.next();
+						while (iteratorB.hasNext()){
+							vertex_B = iteratorB.next();
+							numEdges_B = adjacencyList.get(vertex_B).size(); 
+							if (numEdges_B > 1 && adjacencyList.get(vertex_A).contains(vertex_B) && adjacencyList.get(vertex_B).contains(vertex_A)){
+								ret.add(getTriangle(vertex_index, vertex_A, vertex_B));
+							}
+						}
+					}
+					 adjacencyList.get(vertex_A).remove(vertex_index);
+					 iteratorA.remove();
+				}
+			}
+			vertex.clear();
+		}
+	}else{
+		ConcurrentHashMap<String,Triangle> syncMap = new ConcurrentHashMap<String, Triangle>();
+		
+		Thread threads[] = new Thread[numCores];
+		for (int i = 0; i < numCores; i++){
+			EnumerateTrianglesParrallel thread = new EnumerateTrianglesParrallel(i,adjacencyList,syncMap);
+			threads[i] = new Thread(thread);
+			threads[i].start();
+		}
+		
+		for (int i = 0; i < numCores; i++){
+			try{
+				threads[i].join();
+			}catch(Exception e){}
+		}
+		
+		List<Triangle> temp = new ArrayList<Triangle>(syncMap.values());
+		ret.addAll(temp);
 	}
 	return ret;
     }
 
+	
 	public Triangle getTriangle(int v1,int v2,int v3){	
 		int x = -1,y = -1,z = -1;
 		if (v1 < v2 && v1 < v3){
@@ -94,6 +151,21 @@ public class TriangleCountImpl {
 			if (v1 < v2){y = v1;z = v2;}else{y = v2;z = v1;}
 		}
 		return new Triangle(x,y,z);
+	}
+	
+	public String getTriangleString(int v1,int v2,int v3){	
+		int x = -1,y = -1,z = -1;
+		if (v1 < v2 && v1 < v3){
+			x = v1;
+			if (v2 < v3){y = v2;z = v3;}else{y = v3;z = v2;}
+		}else if(v2 < v1 && v2 < v3){
+			x = v2;
+			if (v1 < v3){y = v1;z = v3;}else{y = v3;z = v1;}
+		}else if(v3 < v1 && v3 < v2){
+			x = v3;
+			if (v1 < v2){y = v1;z = v2;}else{y = v2;z = v1;}
+		}
+		return x+"_"+y+"_"+"_"+z;
 	}
 	
 	
