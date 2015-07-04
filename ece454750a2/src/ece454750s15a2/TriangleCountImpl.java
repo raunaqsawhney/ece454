@@ -31,15 +31,13 @@ public class TriangleCountImpl {
 	
 	public class EnumerateTrianglesParrallel implements Runnable{
 		private int startingVertex;
-		private ArrayList<HashSet<Integer>> adjacencyList;
-		//private List<Triangle> syncList;
+		private ArrayList<LinkedHashSet<Integer>> adjacencyList;
 		private ConcurrentMap<String,Triangle> syncMap;
 		
-		public EnumerateTrianglesParrallel(int startingVertex, ArrayList<HashSet<Integer>> adjacencyList, ConcurrentHashMap<String,Triangle> syncMap){
+		public EnumerateTrianglesParrallel(int startingVertex, ArrayList<LinkedHashSet<Integer>> adjacencyList, ConcurrentHashMap<String,Triangle> syncMap){
 			this.startingVertex = startingVertex;
 			this.adjacencyList = adjacencyList;
 			this.syncMap = syncMap;
-			//this.syncList = syncList;
 		}
 		
 		public void run(){
@@ -51,65 +49,58 @@ public class TriangleCountImpl {
 			int numVertices = adjacencyList.size();
 			
 			for (int vertex_index = startingVertex; vertex_index < numVertices; vertex_index += numCores) {
-				HashSet<Integer> vertex = adjacencyList.get(vertex_index);
+				LinkedHashSet<Integer> vertex = new LinkedHashSet(adjacencyList.get(vertex_index));
 				numEdges = vertex.size();
 				if (numEdges > 1){
-					
-						Iterator<Integer> iteratorA = vertex.iterator();
-						while(iteratorA.hasNext()){
-							vertex_A = iteratorA.next();
-							numEdges_A = adjacencyList.get(vertex_A).size();
-							if (numEdges_A > 1){
-								Iterator<Integer> iteratorB = vertex.iterator();
-								iteratorB.next();
-								while (iteratorB.hasNext()){
-									vertex_B = iteratorB.next();
-									numEdges_B = adjacencyList.get(vertex_B).size();
-									if (numEdges_B > 1 && adjacencyList.get(vertex_A).contains(vertex_B) && adjacencyList.get(vertex_B).contains(vertex_A)){
-										syncMap.putIfAbsent(getTriangleString(vertex_index, vertex_A, vertex_B),getTriangle(vertex_index, vertex_A, vertex_B)); 
-									}
-								}
+					Iterator<Integer> iteratorA = vertex.iterator();
+					while(iteratorA.hasNext()){
+						vertex_A = iteratorA.next();
+						LinkedHashSet<Integer> vertexA = adjacencyList.get(vertex_A);
+						Iterator<Integer> iteratorB = vertex.iterator();
+						iteratorB.next();
+						while (iteratorB.hasNext()){
+							vertex_B = iteratorB.next();
+							if (vertex_A > vertex_B && adjacencyList.get(vertex_B).size() > 0  && adjacencyList.get(vertex_B).contains(vertex_A)){									
+								syncMap.putIfAbsent(getTriangleString(vertex_index, vertex_A, vertex_B),new Triangle(vertex_index, vertex_B, vertex_A)); 
+							}else if (vertex_B > vertex_A && vertexA.size() > 0  && vertexA.contains(vertex_B)){
+								syncMap.putIfAbsent(getTriangleString(vertex_index, vertex_A, vertex_B),new Triangle(vertex_index, vertex_A, vertex_B)); 
 							}
-							 iteratorA.remove();
 						}
+							 iteratorA.remove();
+					}
 				}
-				vertex.clear();
 			}
 		}
 	}
 	
     public List<Triangle> enumerateTriangles() throws IOException {
-	ArrayList<HashSet<Integer>> adjacencyList = getAdjacencyList(input);
+	ArrayList<LinkedHashSet<Integer>> adjacencyList = getAdjacencyList(input);
 	ArrayList<Triangle> ret = new ArrayList<Triangle>();
 
 	if (numCores == 1){
 		int numEdges = 0;
-		int numEdges_A = 0;
-		int numEdges_B = 0;
 		int vertex_A = 0;
 		int vertex_B = 0;
 		int numVertices = adjacencyList.size();
 		
 		for (int vertex_index = 0; vertex_index < numVertices; vertex_index++) {
-			HashSet<Integer> vertex = adjacencyList.get(vertex_index);
+			LinkedHashSet<Integer> vertex = adjacencyList.get(vertex_index);
 			numEdges = vertex.size();
 			if (numEdges > 1){
 				Iterator<Integer> iteratorA = vertex.iterator();
 				while(iteratorA.hasNext()){
 					vertex_A = iteratorA.next();
-					numEdges_A = adjacencyList.get(vertex_A).size();
-					if (numEdges_A > 1 && vertex_index < vertex_A){
-						Iterator<Integer> iteratorB = vertex.iterator();
-						iteratorB.next();
-						while (iteratorB.hasNext()){
-							vertex_B = iteratorB.next();
-							numEdges_B = adjacencyList.get(vertex_B).size(); 
-							if (numEdges_B > 1 && adjacencyList.get(vertex_A).contains(vertex_B) && adjacencyList.get(vertex_B).contains(vertex_A)){
-								ret.add(getTriangle(vertex_index, vertex_A, vertex_B));
-							}
+					LinkedHashSet<Integer> vertexA = adjacencyList.get(vertex_A);
+					Iterator<Integer> iteratorB = vertex.iterator();
+					iteratorB.next();
+					while (iteratorB.hasNext()){
+						vertex_B = iteratorB.next();
+						if (vertex_A > vertex_B && adjacencyList.get(vertex_B).size() > 0  && adjacencyList.get(vertex_B).contains(vertex_A)){
+							ret.add(new Triangle(vertex_index, vertex_B, vertex_A));
+						}else if (vertex_B > vertex_A && vertexA.size() > 0  && vertexA.contains(vertex_B)){
+							ret.add(new Triangle(vertex_index, vertex_A, vertex_B));
 						}
 					}
-					 adjacencyList.get(vertex_A).remove(vertex_index);
 					 iteratorA.remove();
 				}
 			}
@@ -169,7 +160,7 @@ public class TriangleCountImpl {
 	}
 	
 	
-    public ArrayList<HashSet<Integer>> getAdjacencyList(byte[] data) throws IOException {
+    public ArrayList<LinkedHashSet<Integer>> getAdjacencyList(byte[] data) throws IOException {
 	InputStream istream = new ByteArrayInputStream(data);
 	BufferedReader br = new BufferedReader(new InputStreamReader(istream));
 	String strLine = br.readLine();
@@ -182,17 +173,21 @@ public class TriangleCountImpl {
 	int numEdges = Integer.parseInt(parts[1].split(" ")[0]);
 	System.out.println("Found graph with " + numVertices + " vertices and " + numEdges + " edges");
  
-	ArrayList<HashSet<Integer>> adjacencyList = new ArrayList<HashSet<Integer>>(numVertices);
+	ArrayList<LinkedHashSet<Integer>> adjacencyList = new ArrayList<LinkedHashSet<Integer>>(numVertices);
 	for (int i = 0; i < numVertices; i++) {
-	    adjacencyList.add(new HashSet<Integer>());
+	    adjacencyList.add(new LinkedHashSet<Integer>());
 	}
 	while ((strLine = br.readLine()) != null && !strLine.equals(""))   {
 	    parts = strLine.split(": ");
 	    int vertex = Integer.parseInt(parts[0]);
 	    if (parts.length > 1) {
 		parts = parts[1].split(" +");
+		int edge_vertex = 0;
 		for (String part: parts) {
-		    adjacencyList.get(vertex).add(Integer.parseInt(part));
+			edge_vertex = Integer.parseInt(part);
+			if (edge_vertex > vertex){
+				adjacencyList.get(vertex).add(edge_vertex);
+			}
 		}
 	    }
 	}
